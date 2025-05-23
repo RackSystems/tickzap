@@ -1,0 +1,18 @@
+# Node
+node_modules/
+
+# dotenv
+.env
+.env.*.local
+
+# VS Code
+.vscode/
+
+# WebStorm / JetBrains
+.idea/
+*.iml
+out/
+
+# OS
+.DS_Store
+Thumbs.db
