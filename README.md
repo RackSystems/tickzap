@@ -1,6 +1,6 @@
 # TickZap Project
 
-Tickzap
+Tickzap, a support application, for attend calls, integrated Whatsapp with Evolution API.
 
 ## Prerequisites
 
