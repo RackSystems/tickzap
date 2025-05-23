@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:15
+    image: postgres:latest
     environment:
       POSTGRES_USER: 'tickzap'
       POSTGRES_PASSWORD: 'p@ssw0rd'
@@ -8,7 +8,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
-      - nest_network
+      - tickzap_network
     ports:
       - "5432:5432"
 
@@ -16,5 +16,5 @@ volumes:
   db_data:
 
 networks:
-  nest_network:
+  tickzap_network:
     driver: bridge
