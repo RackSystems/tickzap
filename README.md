@@ -33,5 +33,8 @@ This project uses Prisma ORM with Postgres. The database schema is defined in `p
 ### Prisma Commands
 
 - `npx prisma generate`: Generates the Prisma client
-- `npx prisma migrate dev`: Creates a new migration and applies it
 - `npx prisma studio`: Opens the Prisma Studio UI to view and edit data
+- `npx prisma migrate status`: See migrations status
+- `npx prisma migrate dev`: Execute migrations - apply changes in database
+- `npx prisma migrate dev --name create_table_name --create-only`: Create a new migration for a new table
+- 
