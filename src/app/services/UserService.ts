@@ -1,10 +1,16 @@
 import UserRepository from '../repositories/UserRepository'
 import { User } from '../interfaces/UserInterface'
+import bcrypt from 'bcrypt'
 
 export default {
   //TODO criar um helper para nao trazer o password nas responses
 
   async create(data: User) {
+    if (!data.password) {
+      throw new Error('Senha é obrigatória');
+    }
+
+    data.password = await bcrypt.hash(data.password, 12);
     return await UserRepository.create(data);
   },
 

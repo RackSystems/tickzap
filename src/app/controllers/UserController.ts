@@ -16,8 +16,12 @@ export default {
   },
 
   async store(req: Request, res: Response) {
-    const user = await UserService.create(req.body)
-    res.status(201).json(user)
+    try {
+      const user = await UserService.create(req.body)
+      res.status(201).json(user)
+    } catch (error) {
+      return res.status(400).json({error: `Erro ao cadastrar usuário: ${error}!`})
+    }
   },
 
   async update(req: Request, res: Response) {
