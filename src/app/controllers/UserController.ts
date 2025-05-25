@@ -3,7 +3,7 @@ import UserService from '../services/UserService'
 
 export default {
   async index(req: Request, res: Response) {
-    const users = await UserService.getAll()
+    const users = await UserService.getAll(req.query)
     res.json(users)
   },
 
@@ -25,10 +25,11 @@ export default {
       const { id } = req.params;
       if (!id) return res.status(404).json({error: 'Usuário não encontrado!'})
 
-      const user = await UserService.update(id, req.body)
+      const { password: _, ...safeData } = req.body;
+      const user = await UserService.update(id, safeData)
       res.status(200).json(user)
     } catch (error) {
-      return res.status(400).json({error: 'Erro ao atualizar usuário!'})
+      return res.status(400).json({error: `Erro ao atualizar usuário: ${error}!`})
     }
   },
 
@@ -40,7 +41,7 @@ export default {
       await UserService.delete(id)
       res.status(204).end()
     } catch (error) {
-      return res.status(400).json({error: 'Erro ao excluir usuário!'})
+      return res.status(400).json({error: `Erro ao excluir usuário: ${error}!`})
     }
   }
 }
