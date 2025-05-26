@@ -31,7 +31,7 @@ export default {
   },
 
   async me(req: Request, res: Response): Promise<any> {
-    const response = AuthService.me(req.cookies.userId);
+    const response = await AuthService.me(req.cookies.userId);
 
     res.json({
       message: 'Usuário autenticado',

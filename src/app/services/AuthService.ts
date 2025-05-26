@@ -17,7 +17,7 @@ export default {
   },
 
   async me(userId: string): Promise<Object> {
-    const user = await UserRepository.findByEmail(userId)
+    const user = await UserRepository.getById(userId)
 
     if (!user) {
       throw new Error('Usuário não encontrado')

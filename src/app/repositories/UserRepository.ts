@@ -1,5 +1,5 @@
 import prisma from '../../config/database';
-import { User } from '../interfaces/UserInterface';
+import { User } from '@prisma/client';
 
 export default {
   async findAll(queryParams: {
@@ -52,7 +52,7 @@ export default {
     })
   },
 
-  async findByEmail(email: string) {
+  async findByEmail(email: string): Promise<User | null> {
     return prisma.user.findUnique({
       where: { email }
     });
