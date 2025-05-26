@@ -12,6 +12,9 @@ router.get('/me', authMiddleware, AuthController.me)
 
 // rotas de usuários
 router.get('/users', UserController.index)
+router.get('/users/:id', UserController.show)
 router.post('/users', UserController.store)
+router.put('/users/:id', UserController.update)
+router.delete('/users/:id', UserController.destroy)
 
 export default router
