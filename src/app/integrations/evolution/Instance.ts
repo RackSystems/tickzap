@@ -2,12 +2,12 @@ import client from './Client';
 
 export default {
   async create(payload: object) {
-    const { data } = await client.post('/instance/create', { payload })
+    const { data } = await client.post('/instance/create', payload)
     return data
   },
 
-  async getQrCode(instanceId: string) {
-    const { data } = await client.get(`/instance/qrcode/${instanceId}`)
+  async connect(name: string) {
+    const { data } = await client.get(`/instance/connect/${name}`)
     return data
   },
 
