@@ -21,6 +21,7 @@ router.delete('/users/:id', UserController.destroy)
 // rotas de canais
 router.get('/channels', ChannelController.index)
 router.get('/channels/:id/connect', ChannelController.connect)
+router.get('/channels/:id/status', ChannelController.getStatus)
 router.get('/channels/:id', ChannelController.show)
 router.post('/channels', ChannelController.store)
 router.put('/channels/:id', ChannelController.update)

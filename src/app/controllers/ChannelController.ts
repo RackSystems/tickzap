@@ -58,5 +58,16 @@ export default {
     } catch (error) {
       return res.status(400).json({error: `Erro ao obter QR Code: ${error}!`})
     }
+  },
+
+  async getStatus(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      if (!id) return res.status(404).json({error: 'Canal não encontrado!'})
+      const response = await ChannelService.getStatus(id)
+      res.status(200).json(response)
+    } catch (error) {
+      return res.status(400).json({error: `Erro ao obter Status: ${error}!`})
+    }
   }
 }

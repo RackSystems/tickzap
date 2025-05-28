@@ -55,5 +55,21 @@ export default {
     }
 
     return evolutionResponse;
+  },
+
+  async getStatus(instanceId: string): Promise<any> {
+    const channel = await ChannelRepository.getById(instanceId);
+
+    if (!channel) {
+      throw new Error('Channel not found');
+    }
+
+    const evolutionResponse = await Instance.getStatus(channel.name);
+
+    if (!evolutionResponse) {
+      throw new Error('Failed to retrieve Status from Evolution');
+    }
+
+    return evolutionResponse;
   }
 }
