@@ -1,50 +1,19 @@
-<script setup>
-import {useAuthStore} from "@/stores/useAuthStore";
-import {useToast} from "vue-toastification";
-import {useRouter} from "vue-router";
+<script setup lang="ts">
+import { useRoute } from 'vue-router';
+import AuthLayout from '@/layouts/AuthLayout.vue';
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
+import { computed } from 'vue';
 
-const toast = useToast();
-const router = useRouter();
-const auth = useAuthStore();
+const route = useRoute();
 
-async function logoutHandler() {
-  await auth.logout().then(() => {
-    router.push({name: 'Login'});
-    toast.success("Desconectado.");
-  });
-}
+const layout = computed<typeof DefaultLayout | typeof AuthLayout>(() => {
+  const type = route.meta.layout || 'default';
+  return type === 'default' ? DefaultLayout : AuthLayout;
+});
 </script>
-<template>
-  <div style="background-image: url('/images/background.jpg');
-              background-size: cover;
-              background-position: center;
-              background-repeat: no-repeat;"
-       class="min-h-screen flex flex-col h-screen"
-    >
-    <header class="relative flex px-5 py-3 w-full items-center justify-between text-gray-300 hover:text-white duration-100">
-      <RouterLink to="/">
-        <div class="flex items-center gap-x-5">
-          <img
-              src="/images/logo.png"
-              alt="Logo"
-              class="w-12 hover:animate-pulse"
-          />
-          <span>WE ARE ALL FURIA.</span>
-        </div>
-      </RouterLink>
 
-      <div v-if="auth.isLoggedIn" class="block">
-        <span class="px-3">Bem-vindo, {{ auth.user?.name }}</span>
-        <span
-            class="bg-custom-blue text-white rounded-sm px-3 py-2.5 text-xs uppercase transition duration-200 hover:bg-gray-800 cursor-pointer"
-            @click="logoutHandler"
-        >
-        DESCONECTAR
-      </span>
-      </div>
-    </header>
-    <main class="flex-1 overflow-hidden">
-      <RouterView/>
-    </main>
-  </div>
+<template>
+  <component :is="layout">
+    <RouterView />
+  </component>
 </template>
