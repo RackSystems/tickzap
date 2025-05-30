@@ -1,45 +1,69 @@
-<script setup>
-import {reactive} from "vue";
-import {useAuthStore} from "@/stores/useAuthStore.js";
-import {useToast} from "vue-toastification";
-import {useRouter} from "vue-router";
+<script setup lang="ts">
+import { reactive } from 'vue';
+import { useAuthStore } from '@/stores/useAuthStore.js';
+import { useToast } from 'vue-toastification';
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const toast = useToast();
 const auth = useAuthStore();
-const state = reactive({
-  username: '',
+
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
+const state = reactive<LoginForm>({
+  email: '',
   password: '',
 });
 
 async function loginHandler() {
-  await auth.login({
-    username: state.username,
-    password: state.password,
-  }).then(() => {
-    router.push({name: 'Home'});
-  }).catch((error) => {
-    if (error.response.status === 401) toast.error("Usuário ou senha incorretos. Tente novamente.");
-    else toast.error("Ocorreu um erro no servidor. Tente novamente mais tarde.");
-  });
+  try {
+    await auth.login({
+      email: state.email,
+      password: state.password,
+    });
+
+    router.push({ name: 'Home' });
+  } catch (error) {
+    const err = error as AxiosError;
+
+    if (err.response?.status === 401) {
+      toast.error('E-mail ou senha incorretos. Tente novamente.');
+    } else {
+      toast.error('Ocorreu um erro no servidor. Tente novamente mais tarde.');
+    }
+  }
 }
 </script>
+
 <template>
-  <div class="min-h-screen flex items-center justify-center ">
-    <div class="bg-white rounded-2xl shadow-2xl w-96 lg:w-1/3 justify-center px-6 py-20 lg:px-8 mx-auto">
-      <h1 class="text-gray-900 tracking-tight font-bold text-2xl text-center mb-3">Faça login na sua conta</h1>
-      <form @submit.prevent="loginHandler" class="flex flex-col p-2">
-        <input id="username" v-model="state.username" type="text" placeholder="usuário"/>
-        <input id="password" v-model="state.password" type="password" placeholder="senha"/>
-        <button id="submit-btn" type="submit">Entrar</button>
-      </form>
-      <h2 class="text-gray-900 text-center text-sm">
-        Não tem uma conta?
-        <RouterLink to="/register">Cadastre-se aqui!</RouterLink>
-      </h2>
+  <div class="min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md lg:max-w-lg mx-auto">
+
+      <img
+        class="w-40 mb-4 ml-8"
+        src="@/assets/logo.png"
+        alt="Logo"
+      />
+
+      <div class="bg-white rounded-2xl shadow-2xl px-6 py-12">
+        <h1 class="text-gray-900 tracking-tight text-2xl text-center mb-3">Faça login na sua conta</h1>
+        <form @submit.prevent="loginHandler" class="flex flex-col p-2">
+          <input id="email" v-model="state.email" type="email" placeholder="E-mail" />
+          <input id="password" v-model="state.password" type="password" placeholder="Senha" />
+          <button id="submit-btn" type="submit">Entrar</button>
+        </form>
+        <h2 class="text-xs text-center">Esqueceu sua senha?
+          <RouterLink to="/esqueci-senha">Clique aqui</RouterLink>
+        </h2>
+      </div>
+
     </div>
   </div>
 </template>
+
 <style scoped>
 form input {
   @apply p-2 bg-gray-100 rounded-md m-2 border-0
