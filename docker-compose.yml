@@ -1,5 +1,33 @@
 services:
-  db:
+  backend:
+    build:
+      context: ./backend
+      target: dev
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - tickzap_network
+
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - tickzap_network
+
+  database:
     image: postgres:latest
     environment:
       POSTGRES_USER: 'tickzap'
