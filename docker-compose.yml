@@ -1,5 +1,5 @@
 services:
-  server:
+  backend:
     build:
       context: ./backend
       target: dev
@@ -13,14 +13,14 @@ services:
     networks:
       - tickzap_network
 
-  app:
+  frontend:
     build:
       context: ./frontend
       target: dev
     ports:
       - "5173:5173"
     depends_on:
-      - server
+      - backend
     volumes:
       - ./frontend:/usr/src/app
       - /usr/src/app/node_modules
