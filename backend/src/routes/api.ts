@@ -3,6 +3,7 @@ import UserController from '../app/controllers/UserController'
 import AuthController from '../app/controllers/AuthController'
 import { authMiddleware } from '../app/middlewares/authMiddleware';
 import ChannelController from '../app/controllers/ChannelController';
+import ContactController from '../app/controllers/ContactController';
 
 const router = Router()
 
@@ -26,5 +27,12 @@ router.get('/channels/:id', ChannelController.show)
 router.post('/channels', ChannelController.store)
 router.put('/channels/:id', ChannelController.update)
 router.delete('/channels/:id', ChannelController.destroy)
+
+// rotas de contatos
+router.get('/contacts', ContactController.index)
+router.get('/contacts/:id', ContactController.show)
+router.post('/contacts', ContactController.store)
+router.put('/contacts/:id', ContactController.update)
+router.delete('/contacts/:id', ContactController.destroy)
 
 export default router

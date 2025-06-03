@@ -37,4 +37,7 @@ This project uses Prisma ORM with Postgres. The database schema is defined in `p
 - `npx prisma migrate status`: See migrations status
 - `npx prisma migrate dev`: Execute migrations - apply changes in database
 - `npx prisma migrate dev --name create_table_name --create-only`: Create a new migration for a new table
-- 
+
+### Documentations
+
+- [Express validator](https://express-validator.github.io/docs/)
