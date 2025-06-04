@@ -6,11 +6,19 @@ export default {
     const { email, password } = req.body
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'Email e senha são obrigatórios' })
+      return res.status(400).json({
+        message: 'Email e senha são obrigatórios'
+      })
     }
 
     try {
       const userId = await AuthService.authenticate(email, password)
+
+      if(userId === null) {
+        return res.status(401).json({
+          message: 'Falha ao autenticar: email ou senha inválidos'
+        })
+      }
 
       res.cookie('userId', userId, {
         httpOnly: true,
@@ -21,7 +29,11 @@ export default {
 
       res.status(200).json({ message: 'Login bem-sucedido' })
     } catch (error) {
-      res.status(500).json({ error: 'Erro ao autenticar usuário', body: error })
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao autenticar usuário',
+        errors: error
+      })
     }
   },
 
