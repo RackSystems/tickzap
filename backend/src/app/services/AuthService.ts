@@ -2,18 +2,18 @@ import UserRepository from '../repositories/UserRepository';
 import bcrypt from 'bcrypt';
 
 export default {
-  async authenticate(email: string, password: string): Promise<string> {
-    const user = await UserRepository.findByEmail(email)
+  authenticate: async function(email: string, password: string): Promise<null|string> {
+    const user = await UserRepository.findByEmail(email);
     if (!user) {
-      throw new Error('Falha ao autenticar')
+      return null;
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error('Falha ao autenticar')
+      return null;
     }
 
-    return user.id
+    return user.id;
   },
 
   async me(userId: string): Promise<Object> {
