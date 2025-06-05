@@ -1,9 +1,9 @@
 <script setup>
-import apiClient from '@/services/apiClient';
+import apiClient from '@/api/apiClient';
 import {onBeforeUnmount, onMounted, reactive} from "vue";
 import {useToast} from "vue-toastification";
-import IconLoading from "@/components/IconLoading.vue";
-import {useAuthStore} from "@/stores/useAuthStore";
+import IconLoading from "@/components/Icons/IconLoading.vue";
+import {useAuthStore} from "@/features/auth/useAuthStore.ts";
 import {formatarData} from "../utils/dateFormatter.js";
 import {io} from "socket.io-client";
 
