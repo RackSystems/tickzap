@@ -9,11 +9,13 @@ import type {
 } from '@/features/auth/types';
 import { useToast } from 'vue-toastification';
 import { handleApiError } from '@/api/handleApiError';
+import { useRouter } from 'vue-router';
 
 export const useAuthStore = defineStore('auth', () => {
   const toast = useToast();
-  const user = ref<User | null>(null);
+  const router = useRouter();
 
+  const user = ref<User | null>(null);
   const isLoggedIn = computed<boolean>(() => !!user.value);
 
   const getUser = async (): Promise<void> => {
@@ -44,6 +46,7 @@ export const useAuthStore = defineStore('auth', () => {
       await apiClient.post('/logout');
       user.value = null;
       localStorage.removeItem('auth');
+      await router.push({ name: 'Login' });
     } catch (error) {
       toast.clear();
       toast.error('Oops! Ocorreu um erro ao tentar fazer logout.');

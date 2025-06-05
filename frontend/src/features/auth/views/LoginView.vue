@@ -44,7 +44,7 @@ async function loginHandler(): Promise<void> {
       <Field name="password" v-model="form.password" type="password" placeholder="Senha" rules="required" />
       <ErrorMessage name="password" class="ml-2 mb-2 text-sm text-red-500" />
 
-      <button id="submit-btn" type="submit" :disabled="isLoading">
+      <button id="submit-btn" type="submit" :disabled="isLoading" class="flex justify-center items-center">
         <IconLoading v-if="isLoading" class="mr-2" />
         Entrar
       </button>
