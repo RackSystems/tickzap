@@ -1,17 +1,12 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
-import { useAuthStore } from '@/stores/useAuthStore';
-
-interface RouteMetaCustom {
-  auth?: boolean;
-  title?: string;
-  layout?: 'default' | 'auth';
-}
+import { useAuthStore } from '@/features/auth/useAuthStore';
+import type { RouteMetaCustom } from '@/router/types';
 
 const routes: Array<RouteRecordRaw & { meta: RouteMetaCustom }> = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('@/views/HomeView.vue'),
+    component: () => import('@/features/dashboard/DashboardView.vue'),
     meta: {
       auth: true,
       title: 'Home',
@@ -19,9 +14,19 @@ const routes: Array<RouteRecordRaw & { meta: RouteMetaCustom }> = [
   },
 
   {
+    path: '/canais',
+    name: 'Canais',
+    component: () => import('@/features/channels/ChannelView.vue'),
+    meta: {
+      auth: true,
+      title: 'Canais',
+    },
+  },
+
+  {
     path: '/login',
     name: 'Login',
-    component: () => import('@/views/LoginView.vue'),
+    component: () => import('@/features/auth/views/LoginView.vue'),
     meta: {
       auth: false,
       title: 'Login',
@@ -30,9 +35,21 @@ const routes: Array<RouteRecordRaw & { meta: RouteMetaCustom }> = [
   },
 
   {
+    path: '/cadastro',
+    name: 'Register',
+    component: () => import('@/features/auth/views/RegisterView.vue'),
+    meta: {
+      auth: false,
+      title: 'Finalizar Cadastro',
+      layout: 'auth',
+    },
+    props: true,
+  },
+
+  {
     path: '/recuperar-senha',
     name: 'ForgotPassword',
-    component: () => import('@/views/LoginView.vue'),
+    component: () => import('@/features/auth/views/ForgetPasswordView.vue'),
     meta: {
       auth: false,
       title: 'Recuperar Senha',
@@ -40,7 +57,16 @@ const routes: Array<RouteRecordRaw & { meta: RouteMetaCustom }> = [
     },
   },
 
-
+  {
+    path: '/nova-senha',
+    name: 'no',
+    component: () => import('@/features/auth/views/ResetPasswordView.vue'),
+    meta: {
+      auth: false,
+      title: 'Nova Senha',
+      layout: 'auth',
+    },
+  },
 ];
 
 const index = createRouter({
