@@ -4,6 +4,8 @@ import AuthController from '../app/controllers/AuthController'
 import { authMiddleware } from '../app/middlewares/authMiddleware';
 import ChannelController from '../app/controllers/ChannelController';
 import ContactController from '../app/controllers/ContactController';
+import { handleValidation } from '../app/middlewares/handleValidationMiddleware';
+import { validateUserStore, validateUserUpdate, validateIdParam } from '../app/validators/UserValidator';
 
 const router = Router()
 
@@ -14,10 +16,10 @@ router.get('/me', authMiddleware, AuthController.me)
 
 // rotas de usuários
 router.get('/users', UserController.index)
-router.get('/users/:id', UserController.show)
-router.post('/users', UserController.store)
-router.put('/users/:id', UserController.update)
-router.delete('/users/:id', UserController.destroy)
+router.get('/users/:id', validateIdParam, handleValidation, UserController.show)
+router.post('/users', validateUserStore, handleValidation, UserController.store)
+router.put('/users/:id', validateIdParam, validateUserUpdate, handleValidation, UserController.update)
+router.delete('/users/:id', validateIdParam, handleValidation, UserController.destroy)
 
 // rotas de canais
 router.get('/channels', ChannelController.index)
