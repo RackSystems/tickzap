@@ -4,7 +4,7 @@ import apiClient from '@/api/apiClient';
 import type {
   Credentials,
   PasswordRecoveryRequest,
-  PasswordResetRequest,
+  PasswordResetRequest, RegisterRequest,
   User,
 } from '@/features/auth/types';
 import { useToast } from 'vue-toastification';
