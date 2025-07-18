@@ -6,6 +6,7 @@ import ChannelController from '../app/controllers/ChannelController';
 import ContactController from '../app/controllers/ContactController';
 import { handleValidation } from '../app/middlewares/handleValidationMiddleware';
 import { validateUserStore, validateUserUpdate, validateIdParam } from '../app/validators/UserValidator';
+import { validateContactStore, validateContactUpdate, validateIdParam } from '../app/validators/ContactValidator';
 
 const router = Router()
 
@@ -32,9 +33,9 @@ router.delete('/channels/:id', ChannelController.destroy)
 
 // rotas de contatos
 router.get('/contacts', ContactController.index)
-router.get('/contacts/:id', ContactController.show)
-router.post('/contacts', ContactController.store)
-router.put('/contacts/:id', ContactController.update)
-router.delete('/contacts/:id', ContactController.destroy)
+router.get('/contacts/:id', validateIdParam, handleValidation, ContactController.show)
+router.post('/contacts', validateContactStore, handleValidation, ContactController.store)
+router.put('/contacts/:id', validateIdParam, validateContactUpdate, handleValidation, ContactController.update)
+router.delete('/contacts/:id', validateIdParam, handleValidation, ContactController.destroy)
 
 export default router
