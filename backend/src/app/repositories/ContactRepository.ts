@@ -21,8 +21,8 @@ export default {
     if (queryParams.email) {
       where.email = { contains: queryParams.email, mode: 'insensitive' };
     }
-    if (queryParams.status) {
-      where.status = queryParams.status;
+    if (queryParams.status !== undefined) {
+      where.status = queryParams.status === 'true';
     }
 
     const page = queryParams.page ? parseInt(queryParams.page) : 1;
