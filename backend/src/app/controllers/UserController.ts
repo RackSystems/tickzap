@@ -47,5 +47,17 @@ export default {
     } catch (error) {
       return res.status(400).json({error: `Erro ao excluir usuário: ${error}!`})
     }
+  },
+
+  async enableOrDisable(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      if (!id) return res.status(404).json({error: 'Usuário não encontrado!'})
+
+      const user = await UserService.enableOrDisable(id)
+      res.status(200).json(user)
+    } catch (error) {
+      return res.status(400).json({error: `Erro ao ativar/desativar usuário: ${error}!`})
+    }
   }
 }

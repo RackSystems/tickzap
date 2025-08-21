@@ -31,5 +31,18 @@ export default {
     return await UserRepository.update(id, data);
   },
 
-  //TODO metodo de alterar status e ativar/desativar usuario
+  //TODO metodo de alterar status
+  async changeStatus(id: string) {
+
+  },
+
+  async enableOrDisable(id: string) {
+    let user = await UserRepository.getById(id);
+    if (!user) {
+      return;
+    }
+    user.isActive = !user.isActive;
+    let { password: _, ...safeUser } = user;
+    return this.update(id, safeUser);
+  },
 }

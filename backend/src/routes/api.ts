@@ -21,6 +21,7 @@ router.get('/users/:id', validateIdParam, handleValidation, UserController.show)
 router.post('/users', validateUserStore, handleValidation, UserController.store)
 router.put('/users/:id', validateIdParam, validateUserUpdate, handleValidation, UserController.update)
 router.delete('/users/:id', validateIdParam, handleValidation, UserController.destroy)
+router.patch('/users/:id', validateIdParam, handleValidation, UserController.enableOrDisable)
 
 // rotas de canais
 router.get('/channels', ChannelController.index)
