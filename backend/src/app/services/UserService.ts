@@ -1,6 +1,7 @@
 import UserRepository from '../repositories/UserRepository'
 import { User } from '../interfaces/UserInterface'
 import bcrypt from 'bcrypt'
+import prisma from '../../config/database';
 
 export default {
   //TODO criar um helper para nao trazer o password nas responses
@@ -31,9 +32,15 @@ export default {
     return await UserRepository.update(id, data);
   },
 
-  //TODO metodo de alterar status
-  async changeStatus(id: string) {
-
+  async changeStatus(id: string, status: string) {
+    let user = await UserRepository.getById(id);
+    if (!user) {
+      return;
+    }
+    return prisma.user.update({
+      where: { id },
+      data: { status: status ?? "offline" }
+    });
   },
 
   async enableOrDisable(id: string) {

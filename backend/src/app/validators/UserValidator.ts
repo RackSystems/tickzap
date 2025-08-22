@@ -25,6 +25,10 @@ export const validateUserUpdate = [
   body('password').optional().isLength({ min: 6 }).withMessage('Senha deve ter no mínimo 6 caracteres'),
 ];
 
+export const validateUserStatus = [
+  body('status').optional().notEmpty().withMessage('Status não pode ser vazio'),
+];
+
 export const validateIdParam = [
   param('id')
     .isString()

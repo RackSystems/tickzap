@@ -49,6 +49,19 @@ export default {
     }
   },
 
+  async changeStatus(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      if (!id) return res.status(404).json({error: 'Usuário não encontrado!'})
+
+      const { status } = req.body;
+      const user = await UserService.changeStatus(id, status)
+      res.status(200).json(user)
+    } catch (error) {
+      return res.status(400).json({error: `Erro ao atualizar status: ${error}!`})
+    }
+  },
+
   async enableOrDisable(req: Request, res: Response) {
     try {
       const { id } = req.params;
