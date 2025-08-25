@@ -2,6 +2,7 @@ import UserRepository from '../repositories/UserRepository'
 import { User } from '../interfaces/UserInterface'
 import bcrypt from 'bcrypt'
 import prisma from '../../config/database';
+import { UserStatus } from "@prisma/client";
 
 export default {
   //TODO criar um helper para nao trazer o password nas responses
@@ -49,6 +50,7 @@ export default {
       return;
     }
     user.isActive = !user.isActive;
+    user.status = user.isActive ? UserStatus.ONLINE : UserStatus.OFFLINE;
     let { password: _, ...safeUser } = user;
     return this.update(id, safeUser);
   },

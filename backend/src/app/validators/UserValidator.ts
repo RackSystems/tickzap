@@ -2,6 +2,8 @@ import { body, param } from 'express-validator';
 import UserRepository from '../repositories/UserRepository';
 import { UserStatus } from "@prisma/client";
 
+console.log("UserStatus =>", UserStatus);
+
 export const validateUserStore = [
   body('name').notEmpty().withMessage('Nome é obrigatório'),
   body('email').notEmpty().isEmail().withMessage('E-mail inválido'),
