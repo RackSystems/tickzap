@@ -2,7 +2,7 @@ import UserRepository from '../repositories/UserRepository'
 import { User } from '../interfaces/UserInterface'
 import bcrypt from 'bcrypt'
 import prisma from '../../config/database';
-import { UserStatus } from "@prisma/client";
+import { UserStatus } from "../enums/UserStatusEnum";
 
 export default {
   //TODO criar um helper para nao trazer o password nas responses

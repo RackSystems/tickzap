@@ -11,24 +11,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserStatus {
-  OFFLINE
-  ONLINE
-  IDLE
-  BUSY
-  AWAY
-}
-
 model User {
-  id        String     @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
   password  String
-  email     String     @unique
+  email     String    @unique
   avatar    String?
-  isActive  Boolean    @default(false)
-  status    UserStatus @default(OFFLINE)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  isActive  Boolean   @default(false)
+  status    String    @default("offline")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   Ticket    Ticket[]
   Message   Message[]
 }

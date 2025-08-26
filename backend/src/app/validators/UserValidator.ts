@@ -1,6 +1,6 @@
 import { body, param } from 'express-validator';
 import UserRepository from '../repositories/UserRepository';
-import { UserStatus } from "@prisma/client";
+import { UserStatus } from "../enums/UserStatusEnum";
 
 console.log("UserStatus =>", UserStatus);
 
@@ -28,9 +28,11 @@ export const validateUserUpdate = [
   body('password').optional().isLength({ min: 6 }).withMessage('Senha deve ter no mínimo 6 caracteres'),
 ];
 
+//TODO - body('status').isIn(['OFFLINE', 'ONLINE', 'IDLE', 'BUSY', 'AWAY']).withMessage("Status inválido"),
 export const validateUserStatus = [
   body('status').optional().notEmpty().withMessage('Status não pode ser vazio'),
-  body('status').isIn(Object.values(UserStatus)).withMessage("Status inválido")
+  body('status').isString().withMessage("Status deve ser uma string"),
+  body('status').customSanitizer((value: string) => value.toLowerCase()),
 ];
 
 export const validateIdParam = [

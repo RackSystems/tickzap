@@ -10,7 +10,6 @@ import {
   validateUserUpdate,
   validateIdParam,
   validateUserStatus,
-  validateUserStatus,
 } from '../app/validators/UserValidator';
 import { validateContactStore, validateContactUpdate, validateIdParam } from '../app/validators/ContactValidator';
 
@@ -24,8 +23,8 @@ router.get('/me', authMiddleware, AuthController.me)
 // rotas de usuários
 router.get('/users', UserController.index)
 router.get('/users/:id', validateIdParam, handleValidation, UserController.show)
-router.post('/users', validateUserStore, validateUserStatus, handleValidation, UserController.store)
-router.put('/users/:id', validateIdParam, validateUserUpdate, validateUserStatus, handleValidation, UserController.update)
+router.post('/users', validateUserStore, handleValidation, UserController.store)
+router.put('/users/:id', validateIdParam, validateUserUpdate, handleValidation, UserController.update)
 router.delete('/users/:id', validateIdParam, handleValidation, UserController.destroy)
 router.patch('/users/:id/activate', validateIdParam, handleValidation, UserController.enableOrDisable)
 router.patch('/users/:id/status', validateIdParam, validateUserStatus, handleValidation, UserController.changeStatus)
