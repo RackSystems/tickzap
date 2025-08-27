@@ -5,7 +5,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
 
   if (!userId) {
     return res.status(401).json({
-      message: `Oops! Você precisa estar autenticado para acessar este recurso. ${userId}`
+      message: "Oops! Você precisa estar autenticado para acessar este recurso.",
     });
   }
 
