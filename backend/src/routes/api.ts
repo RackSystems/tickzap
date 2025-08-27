@@ -45,4 +45,6 @@ router.post('/contacts', authMiddleware, validateContactStore, handleValidation,
 router.put('/contacts/:id', authMiddleware, validateIdParam, validateContactUpdate, handleValidation, ContactController.update)
 router.delete('/contacts/:id', authMiddleware, validateIdParam, handleValidation, ContactController.destroy)
 
+//Todo mensagens
+
 export default router

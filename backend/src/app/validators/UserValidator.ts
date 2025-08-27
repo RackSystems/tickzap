@@ -1,8 +1,5 @@
 import { body, param } from 'express-validator';
 import UserRepository from '../repositories/UserRepository';
-import { UserStatus } from "../enums/UserStatusEnum";
-
-console.log("UserStatus =>", UserStatus);
 
 export const validateUserStore = [
   body('name').notEmpty().withMessage('Nome é obrigatório'),
