@@ -38,10 +38,12 @@ export default {
     if (!user) {
       return;
     }
-    return prisma.user.update({
-      where: { id },
-      data: { status: status ?? "offline" }
-    });
+    // if (!Object.values(UserStatus).includes(status as UserStatus)) {
+    //   return;
+    // }
+    user.status =  status ?? "offline";
+    let { password: _, ...safeUser } = user;
+    return this.update(id, safeUser);
   },
 
   async enableOrDisable(id: string) {
@@ -50,7 +52,7 @@ export default {
       return;
     }
     user.isActive = !user.isActive;
-    user.status = user.isActive ? UserStatus.ONLINE : UserStatus.OFFLINE;
+    user.status = user.isActive ? user.status : UserStatus.OFFLINE;
     let { password: _, ...safeUser } = user;
     return this.update(id, safeUser);
   },
