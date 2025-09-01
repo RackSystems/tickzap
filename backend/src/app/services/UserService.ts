@@ -1,8 +1,8 @@
 import UserRepository from '../repositories/UserRepository'
 import { User } from '../interfaces/UserInterface'
 import bcrypt from 'bcrypt'
-import prisma from '../../config/database';
 import { UserStatus } from "../enums/UserStatusEnum";
+import { isValidUserStatus } from "../../helpers/UserHelper"
 
 export default {
   //TODO criar um helper para nao trazer o password nas responses
@@ -38,10 +38,7 @@ export default {
     if (!user) {
       return;
     }
-    // if (!Object.values(UserStatus).includes(status as UserStatus)) {
-    //   return;
-    // }
-    user.status =  status ?? "offline";
+    user.status = isValidUserStatus(status) ? status : UserStatus.OFFLINE;
     let { password: _, ...safeUser } = user;
     return this.update(id, safeUser);
   },
