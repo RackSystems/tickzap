@@ -32,7 +32,7 @@ async function logoutHandler(): Promise<void> {
       <div class="flex flex-col gap-5">
         <div class="flex justify-between items-center">
           <RouterLink to="/" @click="toggleMobileMenu">
-            <img src="@/assets/logo.png" alt="Tickzap" class="w-24" />
+            <img src="/images/logo.png" alt="Tickzap" class="w-24" />
           </RouterLink>
 
           <button class="btn btn-ghost btn-sm" @click="toggleMobileMenu">
@@ -90,7 +90,7 @@ async function logoutHandler(): Promise<void> {
 
         <div class="navbar-center">
           <RouterLink to="/">
-            <img src="@/assets/logo.png" alt="Tickzap" class="w-28 lg:w-32 hover:animate-pulse" />
+            <img src="/images/logo.png" alt="Tickzap" class="w-28 lg:w-32 hover:animate-pulse" />
           </RouterLink>
         </div>
 

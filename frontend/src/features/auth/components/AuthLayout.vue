@@ -3,7 +3,7 @@
     <div class="w-full max-w-md lg:max-w-lg mx-auto">
       <img
         class="w-40 mb-4 ml-8"
-        src="@/assets/logo.png"
+        src="/images/logo.png"
         alt="Logo"
       />
 
