@@ -2,7 +2,7 @@
 import { reactive, ref } from 'vue';
 import { useAuthStore } from '@/features/auth/useAuthStore';
 import { useRouter } from 'vue-router';
-import type { Credentials } from '@/features/auth/types';
+import type { LoginRequest } from '@/features/auth/types';
 import { ErrorMessage, Field, Form } from 'vee-validate';
 import AuthLayout from '@/features/auth/components/AuthLayout.vue';
 import IconLoading from '@/components/Icons/IconLoading.vue';
@@ -12,7 +12,7 @@ const auth = useAuthStore();
 
 const isLoading = ref<boolean>(false);
 
-const form = reactive<Credentials>({
+const form = reactive<LoginRequest>({
   email: '',
   password: '',
 });
