@@ -8,7 +8,10 @@ const route = useRoute();
 
 const layout = computed<typeof DefaultLayout | typeof AuthLayout>(() => {
   const type = route.meta.layout || 'default';
-  return type === 'default' ? DefaultLayout : AuthLayout;
+
+  return type === 'default'
+    ? DefaultLayout
+    : AuthLayout;
 });
 </script>
 

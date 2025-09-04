@@ -5,7 +5,7 @@ export interface User {
   isActive: boolean;
 }
 
-export interface Credentials {
+export interface LoginRequest {
   email: string;
   password: string;
 }

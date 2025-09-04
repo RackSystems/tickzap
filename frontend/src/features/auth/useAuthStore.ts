@@ -2,7 +2,7 @@ import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import apiClient from '@/api/apiClient';
 import type {
-  Credentials,
+  LoginRequest,
   PasswordRecoveryRequest,
   PasswordResetRequest, RegisterRequest,
   User,
@@ -30,7 +30,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
-  const login = async (payload: Credentials): Promise<boolean> => {
+  const login = async (payload: LoginRequest): Promise<boolean> => {
     try {
       await apiClient.post('/login', payload);
       await getUser();
