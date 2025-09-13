@@ -12,6 +12,7 @@ services:
       - /usr/src/app/node_modules
     networks:
       - tickzap_network
+      - evolution-net
 
   frontend:
     build:
@@ -46,3 +47,6 @@ volumes:
 networks:
   tickzap_network:
     driver: bridge
+
+  evolution-net:
+    external: true

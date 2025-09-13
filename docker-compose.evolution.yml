@@ -1,3 +1,5 @@
+name: evolution-api
+
 services:
   api:
     container_name: evolution_api
@@ -12,7 +14,6 @@ services:
       - evolution_instances:/evolution/instances
     networks:
       - evolution-net
-      - dokploy-network
     env_file:
       - .env
     expose:
@@ -28,9 +29,6 @@ services:
       - evolution_redis:/data
     networks:
       evolution-net:
-        aliases:
-          - evolution-redis
-      dokploy-network:
         aliases:
           - evolution-redis
     expose:
@@ -49,14 +47,13 @@ services:
       - -c
       - listen_addresses=*
     environment:
-      - POSTGRES_DB=${POSTGRES_DATABASE}
-      - POSTGRES_USER=${POSTGRES_USERNAME}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=evolution_db
+      - POSTGRES_USER=evolution
+      - POSTGRES_PASSWORD=secret
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - evolution-net
-      - dokploy-network
     expose:
       - "5432"
 
@@ -69,5 +66,3 @@ networks:
   evolution-net:
     name: evolution-net
     driver: bridge
-  dokploy-network:
-    external: true
