@@ -5,6 +5,7 @@ Compose.
 
 - Repositorio da API: https://github.com/RackSystems/tickzap-api
 - Repositorio do Frontend: https://github.com/RackSystems/tickzap-frontend
+- Repositorio da IA: https://github.com/RackSystems/tickzap-ai
 
 ## Visão Geral
 
@@ -12,6 +13,7 @@ O TickZap Project orquestra os seguintes componentes:
 
 - **TickZap API**: Backend da aplicação
 - **TickZap Frontend**: Interface de usuário
+- **TickZap AI**: Serviço de IA para o TickZap
 - **Banco de Dados**: PostgreSQL para armazenamento de dados
 
 ## Estrutura de Diretórios
@@ -23,5 +25,6 @@ chamada `tickzap-project`.
 tickzap-project/
 ├── tickzap/            # Este repositório (orquestrador)
 ├── tickzap-api/        # Repositório da API
-└── tickzap-frontend/   # Repositório do Frontend
+├── tickzap-frontend/   # Repositório do Frontend
+└── tickzap-ai/         # Repositório de IA
 ```
