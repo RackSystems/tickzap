@@ -1,3 +1,5 @@
+name: tickzap
+
 services:
   api:
     build:
@@ -41,12 +43,30 @@ services:
     ports:
       - "5432:5432"
 
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"  # Porta da API
+      - "9001:9001"  # Porta da Interface Web
+    environment:
+      MINIO_ROOT_USER: 'tickzap'
+      MINIO_ROOT_PASSWORD: 'minioadmin'
+    volumes:
+      - minio_data:/data
+    networks:
+      - tickzap_network
+    command: server /data --console-address ":9001"
+
 volumes:
   db_data:
+  minio_data:
 
 networks:
   tickzap_network:
     driver: bridge
 
   evolution-net:
+    external: true
+
+  tickzap_ai_network:
     external: true

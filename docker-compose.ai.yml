@@ -1,0 +1,56 @@
+name: tickzap-ai
+
+services:
+  api:
+    build:
+      context: ../tickzap-ai
+    working_dir: /app
+    volumes:
+      - '../tickzap-ai:/app'
+      - '../tickzap-ai/medias:/medias'
+    env_file:
+      - ../tickzap-ai/.env
+    networks:
+      - tickzap_ai_network
+    depends_on:
+      - pgvector
+      - storage
+    command: uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+      - "9191:9191"
+
+  pgvector:
+    image: agnohq/pgvector:16
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: 'tickzap'
+      POSTGRES_PASSWORD: 'p@ssw0rd'
+      POSTGRES_DB: 'tickzap-vector'
+    volumes:
+      - pgvector_db:/var/lib/postgresql/data
+    networks:
+      - tickzap_ai_network
+    ports:
+      - "5532:5432"
+
+  storage:
+    image: mongo:8.0
+    container_name: storage
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: 'tickzap'
+      MONGO_INITDB_ROOT_PASSWORD: 'p@ssw0rd'
+    ports:
+      - "27017:27017"
+    volumes:
+      - storage_db:/data/db
+    networks:
+      - tickzap_ai_network
+
+volumes:
+  pgvector_db:
+  storage_db:
+
+networks:
+  tickzap_ai_network:
+    driver: bridge
