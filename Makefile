@@ -1,7 +1,7 @@
 up:
 	docker compose -f docker-compose.evolution.yml up -d
 	docker compose -f docker-compose.ai.yml up -d
-	docker compose up -d
+	docker compose up -d --build
 
 down:
 	docker compose down
