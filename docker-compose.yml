@@ -15,6 +15,7 @@ services:
     networks:
       - tickzap_network
       - evolution-net
+      - tickzap_ai_network
 
   frontend:
     build:
@@ -34,12 +35,13 @@ services:
     image: postgres:latest
     environment:
       POSTGRES_USER: 'tickzap'
-      POSTGRES_PASSWORD: 'p@ssw0rd'
+      POSTGRES_PASSWORD: 'secret'
       POSTGRES_DB: 'tickzap'
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
       - tickzap_network
+      - tickzap_ai_network
     ports:
       - "5432:5432"
 

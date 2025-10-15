@@ -25,7 +25,7 @@ services:
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_USER: 'tickzap'
-      POSTGRES_PASSWORD: 'p@ssw0rd'
+      POSTGRES_PASSWORD: 'secret'
       POSTGRES_DB: 'tickzap-vector'
     volumes:
       - pgvector_db:/var/lib/postgresql/data
@@ -53,4 +53,5 @@ volumes:
 
 networks:
   tickzap_ai_network:
+    name: tickzap_ai_network
     driver: bridge
