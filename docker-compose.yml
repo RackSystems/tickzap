@@ -38,7 +38,7 @@ services:
       POSTGRES_PASSWORD: 'secret'
       POSTGRES_DB: 'tickzap'
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql
     networks:
       - tickzap_network
       - tickzap_ai_network
