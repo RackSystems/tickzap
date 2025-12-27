@@ -59,6 +59,12 @@ services:
       - tickzap_network
     command: server /data --console-address ":9001"
 
+  redis:
+    image: redis:latest
+    restart: always
+    networks:
+      - tickzap_network
+
 volumes:
   db_data:
   minio_data:

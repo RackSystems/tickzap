@@ -1,0 +1,62 @@
+{
+  "name": "tickzap",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "worker": "ts-node-dev --respawn --transpile-only src/worker.ts",
+    "build": "tsc",
+    "lint": "eslint src --ext .ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RackSystems/tickzap.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RackSystems/tickzap/issues"
+  },
+  "homepage": "https://github.com/RackSystems/tickzap#readme",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.893.0",
+    "@aws-sdk/s3-request-presigner": "^3.893.0",
+    "@prisma/client": "^6.8.2",
+    "@types/multer": "^2.0.0",
+    "axios": "^1.9.0",
+    "bcrypt": "^6.0.0",
+    "bullmq": "^5.61.0",
+    "cookie": "^1.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "ioredis": "^5.8.2",
+    "multer": "^2.0.2",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie": "^0.6.0",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.21",
+    "@types/ws": "^8.18.1",
+    "@typescript-eslint/eslint-plugin": "^8.46.0",
+    "@typescript-eslint/parser": "^8.46.0",
+    "eslint": "^9.37.0",
+    "globals": "^16.4.0",
+    "prettier": "3.6.2",
+    "prisma": "^6.8.2",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.46.0"
+  }
+}
