@@ -15,3 +15,5 @@ out/
 Thumbs.db
 
 .env
+
+node_modules
