@@ -1,4 +1,4 @@
-import {Prisma, User} from '@prisma/client';
+import {Prisma, User} from '../../config/generated/prisma/client';
 import prisma from '../../config/database';
 import bcrypt from 'bcrypt';
 import {UserStatus} from "../enums/UserStatusEnum";

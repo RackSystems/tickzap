@@ -1,5 +1,5 @@
 import { body, param } from 'express-validator';
-import { TicketStatus } from '@prisma/client';
+import { TicketStatus } from '../../config/generated/prisma/enums';
 
 export const validateTicketStore = [
   body('contactId').notEmpty().withMessage('ID do contato é obrigatório'),

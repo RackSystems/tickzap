@@ -1,4 +1,4 @@
-import { Message, Prisma, TicketStatus } from "@prisma/client";
+import { Message, Prisma, TicketStatus } from '../../config/generated/prisma/client';
 import message from "..//integrations/evolution/Message";
 import prisma from "../../config/database";
 import StorageService from "./StorageService";

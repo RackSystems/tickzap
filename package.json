@@ -1,8 +1,13 @@
 {
   "name": "tickzap",
+  "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@10.26.2",
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "pnpm -r dev"
+    "dev:web": "bun run --cwd apps/web dev",
+    "dev:api": "bun run --cwd apps/api dev",
+    "dev": "bun run dev:web & bun run dev:api"
   }
 }

@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import HttpException from '../exceptions/HttpException';
-import {Prisma} from '@prisma/client';
+import {Prisma} from '../../config/generated/prisma/client';
 
 const PRISMA_TO_HTTP: Record<string, number> = {
   P2025: 404,

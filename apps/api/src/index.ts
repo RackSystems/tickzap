@@ -1,4 +1,4 @@
-import express, {Express} from 'express';
+import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import routes from './routes/api';
 import cookieParser from 'cookie-parser';
@@ -23,10 +23,10 @@ app.use(ErrorHandler)
 
 const port = process.env.PORT ?? 3000;
 
-const server =  app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 
   //initialize websockets - global and by ticket
   // initTicketWebSocket(server);
-  initGlobalWebSocket(server);
+  // initGlobalWebSocket(server);
 });

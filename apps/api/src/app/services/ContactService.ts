@@ -1,4 +1,4 @@
-import {Contact, Prisma} from '@prisma/client';
+import {Contact, Prisma} from '../../config/generated/prisma/client';
 import prisma from '../../config/database';
 
 type ContactQuery = {

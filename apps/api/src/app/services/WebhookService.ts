@@ -3,13 +3,13 @@ import ContactService from "../services/ContactService";
 import TicketService from "./TicketService";
 import ChannelService from "./ChannelService";
 import MessageService from "../services/MessageService";
-import { MediaType, MessageType, TicketStatus } from ".prisma/client";
+import { MediaType, MessageType, TicketStatus } from '../../config/generated/prisma/client';
 import Message from "../integrations/evolution/Message";
 import StorageService from "./StorageService";
 import AgentService from "./AgentService";
 import { messageQueue } from "../queues/messageQueue";
-import {broadcastToChannel, broadcastToWatchingTicket} from "../../websocket";
-import {truncateWithoutCuttingWord} from "../../helpers/TicketHelper";
+import { broadcastToChannel, broadcastToWatchingTicket } from "../../websocket";
+import { truncateWithoutCuttingWord } from "../../helpers/TicketHelper";
 
 const messageTypeToMediaTypeMap: Record<string, MediaType> = {
   imageMessage: "IMAGE",

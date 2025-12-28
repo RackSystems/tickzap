@@ -1,4 +1,4 @@
-import { Agent, Prisma } from "@prisma/client";
+import { Agent, Prisma } from '../../config/generated/prisma/client';
 import prisma from "../../config/database";
 import HttpException from "../exceptions/HttpException";
 import AgnoAgent from "../integrations/agno/Agent";

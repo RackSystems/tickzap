@@ -1,4 +1,4 @@
-import { TicketStatus } from '@prisma/client';
+import { TicketStatus } from '../../config/generated/prisma/enums';
 
 export interface Ticket {
   id: string;

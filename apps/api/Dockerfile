@@ -11,13 +11,14 @@ WORKDIR /tickzap
 # copy manifests
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/api/package.json apps/api/
-COPY apps/api/prisma apps/api/prisma
 
 # install deps
 RUN pnpm install --filter api...
 
 # copy api
 COPY apps/api apps/api
+
+RUN pnpm --filter api exec prisma generate
 
 EXPOSE 3000
 

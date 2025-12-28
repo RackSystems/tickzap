@@ -1,33 +1,33 @@
 name: tickzap
 
 services:
-  api:
-    container_name: api
-    build:
-      context: .
-      dockerfile: apps/api/Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      - database
-    volumes:
-      - .:/app
-    networks:
-      - tickzap_network
+  # api:
+  #   container_name: api
+  #   build:
+  #     context: .
+  #     dockerfile: apps/api/Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - database
+  #   volumes:
+  #     - .:/app
+  #   networks:
+  #     - tickzap_network
 
-  web:
-    container_name: web
-    build:
-      context: .
-      dockerfile: apps/web/Dockerfile
-    ports:
-      - "5173:5173"
-    depends_on:
-      - api
-    volumes:
-      - .:/app
-    networks:
-      - tickzap_network
+  # web:
+  #   container_name: web
+  #   build:
+  #     context: .
+  #     dockerfile: apps/web/Dockerfile
+  #   ports:
+  #     - "5173:5173"
+  #   depends_on:
+  #     - api
+  #   volumes:
+  #     - .:/app
+  #   networks:
+  #     - tickzap_network
 
   database:
     image: postgres:latest
@@ -59,6 +59,8 @@ services:
   redis:
     image: redis:latest
     restart: always
+    ports:
+      - "6379:6379"
     networks:
       - tickzap_network
 
