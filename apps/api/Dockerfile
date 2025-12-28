@@ -1,22 +1,24 @@
-ARG NODE_VERSION=22.16.0
-
-FROM node:${NODE_VERSION}-slim AS base
-WORKDIR /usr/src/app
-EXPOSE 3000
+FROM node:24-slim
 
 # install ssl apk
 RUN apt-get update -y \
     && apt-get install -y openssl
 
-FROM base AS dev
-# Install dependencies
-COPY package*.json ./
-RUN npm install
+RUN corepack enable pnpm
 
-# Copy application code
-COPY . .
+WORKDIR /tickzap
 
-# run migrations npx prisma migrate dev
-RUN npx prisma generate
+# copy manifests
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/api/package.json apps/api/
+COPY apps/api/prisma apps/api/prisma
 
-CMD ["npm", "run", "dev"]
+# install deps
+RUN pnpm install --filter api...
+
+# copy api
+COPY apps/api apps/api
+
+EXPOSE 3000
+
+CMD ["pnpm", "--filter", "api", "dev"]

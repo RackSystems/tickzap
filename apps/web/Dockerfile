@@ -1,15 +1,19 @@
-ARG NODE_VERSION=22.16.0
+FROM node:24-slim
 
-FROM node:${NODE_VERSION}-slim AS base
-WORKDIR /usr/src/app
+RUN corepack enable pnpm
+
+WORKDIR /tickzap
+
+# copy manifests
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/web/package.json apps/web/
+
+# install deps
+RUN pnpm install --filter web...
+
+# copy web
+COPY apps/web apps/web
+
 EXPOSE 5173
 
-FROM base AS dev
-# Install dependencies
-COPY package*.json ./
-RUN npm install
-
-# Copy application code
-COPY . .
-
-CMD ["npm", "run", "dev", "--", "--host"]
+CMD ["pnpm", "--filter", "web", "dev"]
