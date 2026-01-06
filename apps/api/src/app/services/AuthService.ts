@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import userService from "./UserService";
 
 export default {
@@ -8,7 +7,7 @@ export default {
       return null;
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await Bun.password.verify(password, user.password);
     if (!isPasswordValid) {
       return null;
     }

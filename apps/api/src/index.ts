@@ -1,12 +1,9 @@
 import express, { Express } from 'express';
-import dotenv from 'dotenv';
 import routes from './routes/api';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import ErrorHandler from "./app/middlewares/ErrorHandler";
 import { initGlobalWebSocket } from './websocket';
-
-dotenv.config();
 
 const app: Express = express();
 app.use(express.json());

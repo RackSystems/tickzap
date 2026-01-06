@@ -1,12 +1,9 @@
 import { Worker, Job } from "bullmq";
 import IORedis from "ioredis";
 import Agent from "../integrations/agno/Agent";
-import dotenv from "dotenv";
 import sendMessage from "../services/MessageService";
 import {broadcastToChannel, broadcastToWatchingTicket} from "../../websocket";
 import {truncateWithoutCuttingWord} from '../../helpers/TicketHelper'
-
-dotenv.config();
 
 const connection = new IORedis(process.env.REDIS_URL, {
   maxRetriesPerRequest: null,

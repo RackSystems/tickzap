@@ -1,6 +1,5 @@
 import {Prisma, User} from '../../config/generated/prisma/client';
 import prisma from '../../config/database';
-import bcrypt from 'bcrypt';
 import {UserStatus} from "../enums/UserStatusEnum";
 import {isValidUserStatus} from "../../helpers/UserHelper";
 import HttpException from "../exceptions/HttpException";
@@ -50,7 +49,7 @@ export default {
   },
 
   async store(data: Prisma.UserCreateInput): Promise<User> {
-    data.password = await bcrypt.hash(data.password, 12);
+    data.password = await Bun.password.hash(data.password, 12);
     return prisma.user.create({data});
   },
 

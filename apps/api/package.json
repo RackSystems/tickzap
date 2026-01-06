@@ -1,12 +1,12 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "worker": "ts-node-dev --respawn --transpile-only src/worker.ts",
-    "build": "tsc",
+    "start": "bun src/index.ts",
+    "dev": "bun --watch src/index.ts",
+    "worker": "bun --watch src/worker.ts",
+    "build": "bun build ./src/index.ts --outdir ./dist --target bun",
     "lint": "eslint src --ext .ts"
   },
   "repository": {
@@ -27,13 +27,10 @@
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
     "@types/multer": "^2.0.0",
-    "axios": "^1.13.2",
-    "bcrypt": "^6.0.0",
     "bullmq": "^5.66.4",
     "cookie": "^1.1.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "express-validator": "^7.3.1",
     "ioredis": "^5.8.2",
@@ -42,21 +39,18 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
-    "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/node": "^25.0.3",
     "@types/pg": "^8.16.0",
     "@types/ws": "^8.18.1",
     "@typescript-eslint/eslint-plugin": "^8.50.1",
     "@typescript-eslint/parser": "^8.50.1",
+    "bun-types": "^1.3.5",
     "eslint": "^9.39.2",
     "globals": "^16.5.0",
     "prettier": "3.7.4",
     "prisma": "^7.2.0",
-    "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.50.1"
   }

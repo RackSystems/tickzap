@@ -1,7 +1,5 @@
 import axios from "axios";
-import dotenv from "dotenv";
 
-dotenv.config();
 const URL_BASE = process.env.AGNO_BASE_URL as string;
 const TOKEN = process.env.AGNO_TOKEN as string;
 
