@@ -1,19 +1,17 @@
-FROM node:24-slim
-
-RUN corepack enable pnpm
+FROM oven/bun:1.3
 
 WORKDIR /tickzap
 
 # copy manifests
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json bun.lock* ./
 COPY apps/web/package.json apps/web/
 
 # install deps
-RUN pnpm install --filter web...
+RUN bun install
 
 # copy web
 COPY apps/web apps/web
 
 EXPOSE 5173
 
-CMD ["pnpm", "--filter", "web", "dev"]
+CMD ["bun", "run", "dev:web"]
