@@ -7,7 +7,7 @@ COPY package.json bun.lock* ./
 COPY apps/web/package.json apps/web/
 
 # install deps
-RUN bun install
+RUN bun install --filter web
 
 # copy web
 COPY apps/web apps/web

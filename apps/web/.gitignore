@@ -1,15 +1,3 @@
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-*.iml
-out/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
 # OS
 .DS_Store
 Thumbs.db
@@ -29,7 +17,4 @@ dist-ssr
 coverage
 *.local
 
-/cypress/videos/
-/cypress/screenshots/
-
-*.tsbuildinfo
+.env
