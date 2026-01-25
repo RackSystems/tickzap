@@ -1,25 +1,23 @@
-FROM node:24-slim
+FROM oven/bun:1.3
 
 # install ssl apk
 RUN apt-get update -y \
     && apt-get install -y openssl
 
-RUN corepack enable pnpm
-
 WORKDIR /tickzap
 
 # copy manifests
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json bun.lock* ./
 COPY apps/api/package.json apps/api/
 
 # install deps
-RUN pnpm install --filter api...
+RUN bun install --filter api
 
 # copy api
 COPY apps/api apps/api
 
-RUN pnpm --filter api exec prisma generate
+RUN bunx prisma generate --schema=apps/api/prisma/schema.prisma
 
 EXPOSE 3000
 
-CMD ["pnpm", "--filter", "api", "dev"]
+CMD ["bun", "run", "dev:api"]
