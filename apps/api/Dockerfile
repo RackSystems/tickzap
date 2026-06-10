@@ -11,7 +11,7 @@ COPY package.json bun.lock* ./
 COPY apps/api/package.json apps/api/
 
 # install deps
-RUN bun install --filter api
+RUN bun install --filter api --verbose
 
 # copy api
 COPY apps/api apps/api

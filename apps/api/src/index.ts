@@ -3,7 +3,7 @@ import routes from './routes/api';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import ErrorHandler from "./app/middlewares/ErrorHandler";
-import { initGlobalWebSocket } from './websocket';
+// import { initGlobalWebSocket } from './websocket';
 
 const app: Express = express();
 app.use(express.json());
