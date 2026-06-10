@@ -1,4 +1,3 @@
-// @ts-ignore
 import {Request, Response, NextFunction} from 'express';
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction): void {
@@ -11,7 +10,6 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
     return;
   }
 
-  // @ts-ignore
   req.user = { id: userId };
 
   next();

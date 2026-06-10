@@ -41,16 +41,20 @@ enum MessageType {
  *
  **/
 export default {
-  async store(data: Prisma.MessageUncheckedCreateInput): Promise<Message> {
+  async store({ channelId, ...data }: Prisma.MessageUncheckedCreateInput & { channelId?: string }): Promise<Message> {
     if (data.ticketId && !data.status) {
       data.status = MessageStatus.RECEIVED;
     }
 
     if (!data.ticketId) {
+      if (!channelId) {
+        throw new HttpException("channelId é obrigatório para criar um ticket", 400);
+      }
+
       const createdTicket = await prisma.ticket.create({
         data: {
           contactId: data.contactId,
-          channelId: data.channelId,
+          channelId,
           status: TicketStatus.PENDING,
           UserId: data.userId,
         },
@@ -60,7 +64,7 @@ export default {
       data.status = MessageStatus.SEND;
     }
 
-    if (data.mediaType) {
+    if (data.mediaType && data.mediaUrl) {
       //save path - object key on mediaUrl
       const mediaMessage = this.processMidea(data.mediaType, data.mediaUrl);
       data = { ...data, ...mediaMessage };

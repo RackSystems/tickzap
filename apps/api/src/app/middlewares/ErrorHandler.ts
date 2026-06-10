@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from 'express';
+import {Request, Response} from 'express';
 import HttpException from '../exceptions/HttpException';
 import {Prisma} from '../../config/generated/prisma/client';
 
@@ -11,8 +11,7 @@ const PRISMA_TO_HTTP: Record<string, number> = {
 const ErrorHandler = (
   err: Error,
   _req: Request,
-  res: Response,
-  _next: NextFunction
+  res: Response
 ): void => {
   if (err instanceof HttpException) {
     res.status(err.status).json({error: err.message});

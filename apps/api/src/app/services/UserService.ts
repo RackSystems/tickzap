@@ -49,7 +49,7 @@ export default {
   },
 
   async store(data: Prisma.UserCreateInput): Promise<User> {
-    data.password = await Bun.password.hash(data.password, 12);
+    data.password = await Bun.password.hash(data.password, { algorithm: "bcrypt", cost: 12 });
     return prisma.user.create({data});
   },
 
@@ -62,6 +62,10 @@ export default {
 
   async destroy(id: string): Promise<User> {
     const user = await prisma.user.findUnique({where: {id}});
+    if (!user) {
+      throw new HttpException('Usuário não encontrado', 404);
+    }
+
     if (user.isActive) {
       throw new HttpException('Usuário ativo, desative antes de excluir', 400);
     }

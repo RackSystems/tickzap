@@ -5,7 +5,9 @@ import sendMessage from "../services/MessageService";
 import {broadcastToChannel, broadcastToWatchingTicket} from "../../websocket";
 import {truncateWithoutCuttingWord} from '../../helpers/TicketHelper'
 
-const connection = new IORedis(process.env.REDIS_URL, {
+const redisURL = process.env.REDIS_URL as string;
+
+const connection = new IORedis(redisURL, {
   maxRetriesPerRequest: null,
   enableReadyCheck: false,
 });
@@ -68,8 +70,7 @@ messageWorker.on("completed", async (job: Job) => {
   }
 });
 
-// @ts-ignore
-messageWorker.on("failed", async (job: Job, err: Error) => {
+messageWorker.on("failed", async (job: Job | undefined, err: Error) => {
   if (job) {
     console.log(`Job ${job.id} has failed with ${err.message}`);
     await broadcastToWatchingTicket(job.data.payload.session_id, {

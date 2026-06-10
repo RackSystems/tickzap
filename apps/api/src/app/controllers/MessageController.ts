@@ -1,4 +1,3 @@
-// @ts-ignore
 import {Request, Response} from 'express'
 import MessageService from "../services/MessageService";
 
@@ -27,7 +26,7 @@ export default {
 
   //send messages by tickzap using evolution integration
   async sendMessage(req: Request, res: Response): Promise<void> {
-    const userId = req.user.id
+    const userId = req.user?.id
     const data = {...req.body, userId: userId}
     const message = await MessageService.sendMessage(data)
     res.json(message)

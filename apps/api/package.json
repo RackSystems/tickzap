@@ -34,7 +34,7 @@
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "express-validator": "^7.3.1",
-    "ioredis": "^5.8.2",
+    "ioredis": "5.8.2",
     "multer": "^2.0.2",
     "pg": "^8.16.3",
     "ws": "^8.18.3"

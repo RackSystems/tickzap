@@ -3,7 +3,7 @@ import { Server, IncomingMessage } from 'http';
 import IORedis from 'ioredis';
 import cookie from 'cookie';
 
-const redis = new IORedis(process.env.REDIS_URL);
+const redis = new IORedis(process.env.REDIS_URL as string);
 
 //WebSocket types
 export const ticketClients = new Map<string, WebSocket>();
