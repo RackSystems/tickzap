@@ -1,4 +1,4 @@
-import userService from "./UserService";
+import userService from "../../modules/users/UserService";
 
 export default {
   authenticate: async function (email: string, password: string): Promise<null | string> {

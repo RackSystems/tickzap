@@ -1,8 +1,8 @@
-import {Prisma, User} from '../../config/generated/prisma/client';
-import prisma from '../../config/database';
-import {UserStatus} from "../enums/UserStatusEnum";
-import {isValidUserStatus} from "../../helpers/UserHelper";
-import HttpException from "../exceptions/HttpException";
+import { Prisma, User } from "../../config/generated/prisma/client";
+import prisma from "../../config/database";
+import { UserStatus } from "./UserStatusEnum";
+import { isValidUserStatus } from "./UserHelper";
+import HttpException from "../../app/exceptions/HttpException";
 
 type UserQuery = {
   name?: string;
@@ -18,16 +18,16 @@ export default {
     const where: Prisma.UserWhereInput = {};
 
     if (queryParams.name) {
-      where.name = {contains: queryParams.name, mode: 'insensitive'};
+      where.name = { contains: queryParams.name, mode: "insensitive" };
     }
     if (queryParams.email) {
-      where.email = {contains: queryParams.email, mode: 'insensitive'};
+      where.email = { contains: queryParams.email, mode: "insensitive" };
     }
     if (queryParams.status) {
       where.status = queryParams.status;
     }
     if (queryParams.isActive !== undefined) {
-      where.isActive = queryParams.isActive === 'true';
+      where.isActive = queryParams.isActive === "true";
     }
 
     const page = queryParams.page ? parseInt(queryParams.page) : 1;
@@ -50,59 +50,59 @@ export default {
 
   async store(data: Prisma.UserCreateInput): Promise<User> {
     data.password = await Bun.password.hash(data.password, { algorithm: "bcrypt", cost: 12 });
-    return prisma.user.create({data});
+    return prisma.user.create({ data });
   },
 
   async update(id: string, data: Prisma.UserUpdateInput): Promise<User> {
     return prisma.user.update({
-      where: {id},
+      where: { id },
       data,
     });
   },
 
   async destroy(id: string): Promise<User> {
-    const user = await prisma.user.findUnique({where: {id}});
+    const user = await prisma.user.findUnique({ where: { id } });
     if (!user) {
-      throw new HttpException('Usuário não encontrado', 404);
+      throw new HttpException("Usuário não encontrado", 404);
     }
 
     if (user.isActive) {
-      throw new HttpException('Usuário ativo, desative antes de excluir', 400);
+      throw new HttpException("Usuário ativo, desative antes de excluir", 400);
     }
 
     return prisma.user.delete({
-      where: {id},
+      where: { id },
     });
   },
 
   async changeStatus(id: string, status: string): Promise<User | null> {
-    const user = await prisma.user.findUnique({where: {id}});
+    const user = await prisma.user.findUnique({ where: { id } });
     if (!user) {
-      throw new HttpException('Usuário não encontrado', 404);
+      throw new HttpException("Usuário não encontrado", 404);
     }
 
     const newStatus = isValidUserStatus(status) ? status : UserStatus.OFFLINE;
 
     return prisma.user.update({
-      where: {id},
-      data: {status: newStatus},
+      where: { id },
+      data: { status: newStatus },
     });
   },
 
   async enableOrDisable(id: string): Promise<User | null> {
-    const user = await prisma.user.findUnique({where: {id}});
+    const user = await prisma.user.findUnique({ where: { id } });
     if (!user) {
-      throw new HttpException('Usuário não encontrado', 404);
+      throw new HttpException("Usuário não encontrado", 404);
     }
 
     const newIsActive = !user.isActive;
     const newStatus = newIsActive ? user.status : UserStatus.OFFLINE;
 
     return prisma.user.update({
-      where: {id},
+      where: { id },
       data: {
         isActive: newIsActive,
-        status: newStatus
+        status: newStatus,
       },
     });
   },

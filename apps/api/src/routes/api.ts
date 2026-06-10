@@ -1,5 +1,4 @@
 import { Router } from "express";
-import UserController from "../app/controllers/UserController";
 import AuthController from "../app/controllers/AuthController";
 import { authMiddleware } from "../app/middlewares/authMiddleware";
 import ChannelController from "../app/controllers/ChannelController";
@@ -9,11 +8,11 @@ import WebhookController from "../app/controllers/WebhookController";
 import MessageController from "../app/controllers/MessageController";
 import StorageController from "../app/controllers/StorageController";
 import { handleValidation } from "../app/middlewares/handleValidationMiddleware";
-import { validateUserStore, validateUserUpdate, validateUserStatus } from "../app/validators/UserValidator";
 import { validateContactStore, validateContactUpdate } from "../app/validators/ContactValidator";
 import { validateTicketStore, validateTicketUpdate } from "../app/validators/TicketValidator";
 import AgentController from "../app/controllers/AgentController";
 import { validateAgentStore, validateAgentUpdate, validateUseAgent } from "../app/validators/AgentValidator";
+import usersRoutes from "../modules/users/routes";
 
 const router = Router();
 
@@ -22,14 +21,7 @@ router.post("/login", AuthController.authenticate);
 router.post("/logout", authMiddleware, AuthController.deauthenticate);
 router.get("/me", authMiddleware, AuthController.me);
 
-// Users
-router.get("/users", authMiddleware, UserController.index);
-router.get("/users/:id", authMiddleware, UserController.show);
-router.post("/users", validateUserStore, handleValidation, UserController.store);
-router.put("/users/:id", authMiddleware, validateUserUpdate, handleValidation, UserController.update);
-router.delete("/users/:id", authMiddleware, UserController.destroy);
-router.patch("/users/:id/activate", authMiddleware, UserController.enableOrDisable);
-router.patch("/users/:id/status", authMiddleware, validateUserStatus, handleValidation, UserController.changeStatus);
+router.use("/users", usersRoutes);
 
 // Channels
 router.get("/channels", authMiddleware, ChannelController.index);
