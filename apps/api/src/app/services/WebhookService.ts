@@ -1,7 +1,7 @@
 import { formatPhoneNumber } from "../../helpers/functions";
 import ContactService from "../../modules/contacts/ContactService";
 import TicketService from "./TicketService";
-import ChannelService from "./ChannelService";
+import ChannelService from "../../modules/channels/ChannelService";
 import MessageService from "../services/MessageService";
 import { MediaType, MessageType, TicketStatus } from '../../config/generated/prisma/client';
 import Message from "../integrations/evolution/Message";

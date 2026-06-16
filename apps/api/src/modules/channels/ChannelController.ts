@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import ChannelService from "../services/ChannelService";
+import ChannelService from "./ChannelService";
 
 export default {
   async index(req: Request, res: Response): Promise<void> {

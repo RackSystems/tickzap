@@ -1,5 +1,5 @@
 import { Channel, Prisma } from '../../config/generated/prisma/client';
-import Instance from "../integrations/evolution/Instance";
+import Instance from "../../app/integrations/evolution/Instance";
 import prisma from "../../config/database";
 
 type IndexQueryParams = {

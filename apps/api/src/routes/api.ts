@@ -1,7 +1,6 @@
 import { Router } from "express";
 import AuthController from "../app/controllers/AuthController";
 import { authMiddleware } from "../app/middlewares/authMiddleware";
-import ChannelController from "../app/controllers/ChannelController";
 import TicketController from "../app/controllers/TicketController";
 import WebhookController from "../app/controllers/WebhookController";
 import MessageController from "../app/controllers/MessageController";
@@ -12,6 +11,7 @@ import AgentController from "../app/controllers/AgentController";
 import { validateAgentStore, validateAgentUpdate, validateUseAgent } from "../app/validators/AgentValidator";
 import usersRoutes from "../modules/users/routes";
 import contactsRoutes from "../modules/contacts/routes";
+import channelsRoutes from "../modules/channels/routes";
 
 const router = Router();
 
@@ -22,14 +22,7 @@ router.get("/me", authMiddleware, AuthController.me);
 
 router.use("/users", usersRoutes);
 
-// Channels
-router.get("/channels", authMiddleware, ChannelController.index);
-router.get("/channels/:id/connect", authMiddleware, ChannelController.connect);
-router.get("/channels/:id/status", authMiddleware, ChannelController.getStatus);
-router.get("/channels/:id", authMiddleware, ChannelController.show);
-router.post("/channels", authMiddleware, ChannelController.store);
-router.put("/channels/:id", authMiddleware, ChannelController.update);
-router.delete("/channels/:id", authMiddleware, ChannelController.destroy);
+router.use("/channels", channelsRoutes);
 
 router.use("/contacts", contactsRoutes);
 
