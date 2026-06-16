@@ -1,5 +1,5 @@
 import {Request, Response} from 'express'
-import ContactService from '../services/ContactService'
+import ContactService from './ContactService'
 
 export default {
   async index(req: Request, res: Response) {

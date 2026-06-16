@@ -1,5 +1,5 @@
 import { formatPhoneNumber } from "../../helpers/functions";
-import ContactService from "../services/ContactService";
+import ContactService from "../../modules/contacts/ContactService";
 import TicketService from "./TicketService";
 import ChannelService from "./ChannelService";
 import MessageService from "../services/MessageService";

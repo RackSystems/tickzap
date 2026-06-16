@@ -1,5 +1,5 @@
 import {body} from 'express-validator';
-import ContactService from "../services/ContactService";
+import ContactService from "./ContactService";
 
 export const validateContactStore = [
   body('name').notEmpty().withMessage('Nome é obrigatório'),

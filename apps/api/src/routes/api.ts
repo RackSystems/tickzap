@@ -2,17 +2,16 @@ import { Router } from "express";
 import AuthController from "../app/controllers/AuthController";
 import { authMiddleware } from "../app/middlewares/authMiddleware";
 import ChannelController from "../app/controllers/ChannelController";
-import ContactController from "../app/controllers/ContactController";
 import TicketController from "../app/controllers/TicketController";
 import WebhookController from "../app/controllers/WebhookController";
 import MessageController from "../app/controllers/MessageController";
 import StorageController from "../app/controllers/StorageController";
 import { handleValidation } from "../app/middlewares/handleValidationMiddleware";
-import { validateContactStore, validateContactUpdate } from "../app/validators/ContactValidator";
 import { validateTicketStore, validateTicketUpdate } from "../app/validators/TicketValidator";
 import AgentController from "../app/controllers/AgentController";
 import { validateAgentStore, validateAgentUpdate, validateUseAgent } from "../app/validators/AgentValidator";
 import usersRoutes from "../modules/users/routes";
+import contactsRoutes from "../modules/contacts/routes";
 
 const router = Router();
 
@@ -32,12 +31,7 @@ router.post("/channels", authMiddleware, ChannelController.store);
 router.put("/channels/:id", authMiddleware, ChannelController.update);
 router.delete("/channels/:id", authMiddleware, ChannelController.destroy);
 
-// Contacts
-router.get("/contacts", authMiddleware, ContactController.index);
-router.get("/contacts/:id", authMiddleware, ContactController.show);
-router.post("/contacts", authMiddleware, validateContactStore, handleValidation, ContactController.store);
-router.put("/contacts/:id", authMiddleware, validateContactUpdate, handleValidation, ContactController.update);
-router.delete("/contacts/:id", authMiddleware, ContactController.destroy);
+router.use("/contacts", contactsRoutes);
 
 // Tickets
 router.get("/tickets", authMiddleware, TicketController.index);
