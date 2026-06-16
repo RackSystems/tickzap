@@ -7,11 +7,10 @@ import MessageController from "../app/controllers/MessageController";
 import StorageController from "../app/controllers/StorageController";
 import { handleValidation } from "../app/middlewares/handleValidationMiddleware";
 import { validateTicketStore, validateTicketUpdate } from "../app/validators/TicketValidator";
-import AgentController from "../app/controllers/AgentController";
-import { validateAgentStore, validateAgentUpdate, validateUseAgent } from "../app/validators/AgentValidator";
 import usersRoutes from "../modules/users/routes";
 import contactsRoutes from "../modules/contacts/routes";
 import channelsRoutes from "../modules/channels/routes";
+import agentsRoutes from "../modules/agents/routes";
 
 const router = Router();
 
@@ -40,13 +39,7 @@ router.post("/tickets/messages", authMiddleware, MessageController.store);
 router.post("/tickets/messages/send", authMiddleware, MessageController.sendMessage);
 router.patch("/tickets/:id/ai", authMiddleware, TicketController.toggleAI);
 
-// Agents
-router.get("/agents", authMiddleware, AgentController.index);
-router.get("/agents/:id", authMiddleware, AgentController.show);
-router.post("/agents", authMiddleware, validateAgentStore, handleValidation, AgentController.store);
-router.put("/agents/:id", authMiddleware, validateAgentUpdate, handleValidation, AgentController.update);
-router.delete("/agents/:id", authMiddleware, AgentController.destroy);
-router.post("/agents/:id/use", authMiddleware, validateUseAgent, handleValidation, AgentController.use);
+router.use("/agents", agentsRoutes);
 
 // Storage
 router.post("/storage/upload", authMiddleware, StorageController.upload);

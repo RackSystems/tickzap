@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import AgentService from "../services/AgentService";
+import AgentService from "./AgentService";
 
 export default {
   async index(req: Request, res: Response): Promise<void> {

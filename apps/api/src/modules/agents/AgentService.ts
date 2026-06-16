@@ -1,7 +1,7 @@
 import { Agent, Prisma } from '../../config/generated/prisma/client';
 import prisma from "../../config/database";
-import HttpException from "../exceptions/HttpException";
-import AgnoAgent from "../integrations/agno/Agent";
+import HttpException from "../../app/exceptions/HttpException";
+import AgnoAgent from "../../app/integrations/agno/Agent";
 
 type AgentQuery = {
   name?: string;
