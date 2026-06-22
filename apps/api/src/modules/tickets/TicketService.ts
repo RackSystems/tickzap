@@ -1,6 +1,6 @@
 import { Ticket, Prisma, TicketStatus } from '../../config/generated/prisma/client';
 import prisma from "../../config/database";
-import HttpException from "../exceptions/HttpException";
+import HttpException from "../../app/exceptions/HttpException";
 
 type TicketQuery = {
   contactId?: string;

@@ -4,11 +4,11 @@ import prisma from "../../config/database";
 import StorageService from "./StorageService";
 import HttpException from "../exceptions/HttpException";
 import ContactService from "../../modules/contacts/ContactService";
-import TicketService from "./TicketService";
+import TicketService from "../../modules/tickets/TicketService";
 import ChannelService from "../../modules/channels/ChannelService";
 import { messageQueue } from "../queues/messageQueue";
 import {broadcastToChannel, broadcastToWatchingTicket} from "../../websocket";
-import {truncateWithoutCuttingWord} from "../../helpers/TicketHelper";
+import {truncateWithoutCuttingWord} from "../../modules/tickets/TicketHelper";
 
 type MediaMessage = {
   mediaType: MediaType;

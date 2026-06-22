@@ -1,6 +1,6 @@
 import { formatPhoneNumber } from "../../helpers/functions";
 import ContactService from "../../modules/contacts/ContactService";
-import TicketService from "./TicketService";
+import TicketService from "../../modules/tickets/TicketService";
 import ChannelService from "../../modules/channels/ChannelService";
 import MessageService from "../services/MessageService";
 import { MediaType, MessageType, TicketStatus } from '../../config/generated/prisma/client';
@@ -9,7 +9,7 @@ import StorageService from "./StorageService";
 import AgentService from "../../modules/agents/AgentService";
 import { messageQueue } from "../queues/messageQueue";
 import { broadcastToChannel, broadcastToWatchingTicket } from "../../websocket";
-import { truncateWithoutCuttingWord } from "../../helpers/TicketHelper";
+import { truncateWithoutCuttingWord } from "../../modules/tickets/TicketHelper";
 
 const messageTypeToMediaTypeMap: Record<string, MediaType> = {
   imageMessage: "IMAGE",

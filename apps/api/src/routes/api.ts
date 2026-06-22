@@ -1,16 +1,14 @@
 import { Router } from "express";
 import AuthController from "../app/controllers/AuthController";
 import { authMiddleware } from "../app/middlewares/authMiddleware";
-import TicketController from "../app/controllers/TicketController";
 import WebhookController from "../app/controllers/WebhookController";
 import MessageController from "../app/controllers/MessageController";
 import StorageController from "../app/controllers/StorageController";
-import { handleValidation } from "../app/middlewares/handleValidationMiddleware";
-import { validateTicketStore, validateTicketUpdate } from "../app/validators/TicketValidator";
 import usersRoutes from "../modules/users/routes";
 import contactsRoutes from "../modules/contacts/routes";
 import channelsRoutes from "../modules/channels/routes";
 import agentsRoutes from "../modules/agents/routes";
+import ticketsRoutes from "../modules/tickets/routes";
 
 const router = Router();
 
@@ -25,19 +23,12 @@ router.use("/channels", channelsRoutes);
 
 router.use("/contacts", contactsRoutes);
 
-// Tickets
-router.get("/tickets", authMiddleware, TicketController.index);
-router.get("/tickets/:id", authMiddleware, handleValidation, TicketController.show);
-router.post("/tickets", authMiddleware, validateTicketStore, handleValidation, TicketController.store);
-router.put("/tickets/:id", authMiddleware, validateTicketUpdate, handleValidation, TicketController.update);
-router.delete("/tickets/:id", authMiddleware, handleValidation, TicketController.destroy);
+router.use("/tickets", ticketsRoutes);
 
-// Ticket Messages
 router.get("/tickets/:id/messages", authMiddleware, MessageController.index);
 // router.get('/tickets/:id/messages/:messageId', authMiddleware, handleValidation, MessageController.show)
 router.post("/tickets/messages", authMiddleware, MessageController.store);
 router.post("/tickets/messages/send", authMiddleware, MessageController.sendMessage);
-router.patch("/tickets/:id/ai", authMiddleware, TicketController.toggleAI);
 
 router.use("/agents", agentsRoutes);
 

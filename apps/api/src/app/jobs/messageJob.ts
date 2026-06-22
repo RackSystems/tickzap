@@ -3,7 +3,7 @@ import IORedis from "ioredis";
 import Agent from "../integrations/agno/Agent";
 import sendMessage from "../services/MessageService";
 import {broadcastToChannel, broadcastToWatchingTicket} from "../../websocket";
-import {truncateWithoutCuttingWord} from '../../helpers/TicketHelper'
+import {truncateWithoutCuttingWord} from '../../modules/tickets/TicketHelper'
 
 const redisURL = process.env.REDIS_URL as string;
 
