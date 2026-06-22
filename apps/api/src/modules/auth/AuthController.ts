@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import AuthService from '../services/AuthService';
+import AuthService from './AuthService';
 
 export default {
   async authenticate(req: Request, res: Response): Promise <any> {

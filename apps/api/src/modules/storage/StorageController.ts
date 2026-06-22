@@ -1,5 +1,5 @@
 import {Request, Response} from 'express'
-import StorageService from "../services/StorageService";
+import StorageService from "./StorageService";
 
 export default {
   async upload(req: Request, res: Response) {

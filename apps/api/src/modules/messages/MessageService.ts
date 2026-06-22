@@ -1,7 +1,7 @@
 import { Message, Prisma, TicketStatus } from '../../config/generated/prisma/client';
 import message from "../../app/integrations/evolution/Message";
 import prisma from "../../config/database";
-import StorageService from "../../app/services/StorageService";
+import StorageService from "../../modules/storage/StorageService";
 import HttpException from "../../app/exceptions/HttpException";
 import ContactService from "../../modules/contacts/ContactService";
 import TicketService from "../../modules/tickets/TicketService";

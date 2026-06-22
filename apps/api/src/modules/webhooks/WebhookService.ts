@@ -5,7 +5,7 @@ import ChannelService from "../../modules/channels/ChannelService";
 import MessageService from "../../modules/messages/MessageService";
 import { MediaType, MessageType, TicketStatus } from '../../config/generated/prisma/client';
 import Message from "../../app/integrations/evolution/Message";
-import StorageService from "../../app/services/StorageService";
+import StorageService from "../../modules/storage/StorageService";
 import AgentService from "../../modules/agents/AgentService";
 import { messageQueue } from "../../modules/messages/messageQueue";
 import { broadcastToChannel, broadcastToWatchingTicket } from "../../websocket";
