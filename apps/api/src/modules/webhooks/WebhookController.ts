@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import WebhookService from "../services/WebhookService";
+import WebhookService from "./WebhookService";
 
 export default {
   async evolutionHandle(req: Request, res: Response): Promise<void> {

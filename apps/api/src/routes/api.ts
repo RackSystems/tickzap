@@ -1,7 +1,6 @@
 import { Router } from "express";
 import AuthController from "../app/controllers/AuthController";
 import { authMiddleware } from "../app/middlewares/authMiddleware";
-import WebhookController from "../app/controllers/WebhookController";
 import StorageController from "../app/controllers/StorageController";
 import usersRoutes from "../modules/users/routes";
 import contactsRoutes from "../modules/contacts/routes";
@@ -9,6 +8,7 @@ import channelsRoutes from "../modules/channels/routes";
 import agentsRoutes from "../modules/agents/routes";
 import ticketsRoutes from "../modules/tickets/routes";
 import messagesRoutes from "../modules/messages/routes";
+import webhooksRoutes from "../modules/webhooks/routes";
 
 const router = Router();
 
@@ -32,7 +32,6 @@ router.use("/agents", agentsRoutes);
 // Storage
 router.post("/storage/upload", authMiddleware, StorageController.upload);
 
-// Webhooks
-router.post("/webhook/evolution", WebhookController.evolutionHandle);
+router.use("/webhook", webhooksRoutes);
 
 export default router;
