@@ -1,12 +1,12 @@
 import { Message, Prisma, TicketStatus } from '../../config/generated/prisma/client';
-import message from "..//integrations/evolution/Message";
+import message from "../../app/integrations/evolution/Message";
 import prisma from "../../config/database";
-import StorageService from "./StorageService";
-import HttpException from "../exceptions/HttpException";
+import StorageService from "../../app/services/StorageService";
+import HttpException from "../../app/exceptions/HttpException";
 import ContactService from "../../modules/contacts/ContactService";
 import TicketService from "../../modules/tickets/TicketService";
 import ChannelService from "../../modules/channels/ChannelService";
-import { messageQueue } from "../queues/messageQueue";
+import { messageQueue } from "./messageQueue";
 import {broadcastToChannel, broadcastToWatchingTicket} from "../../websocket";
 import {truncateWithoutCuttingWord} from "../../modules/tickets/TicketHelper";
 

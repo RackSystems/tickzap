@@ -2,13 +2,13 @@ import { Router } from "express";
 import AuthController from "../app/controllers/AuthController";
 import { authMiddleware } from "../app/middlewares/authMiddleware";
 import WebhookController from "../app/controllers/WebhookController";
-import MessageController from "../app/controllers/MessageController";
 import StorageController from "../app/controllers/StorageController";
 import usersRoutes from "../modules/users/routes";
 import contactsRoutes from "../modules/contacts/routes";
 import channelsRoutes from "../modules/channels/routes";
 import agentsRoutes from "../modules/agents/routes";
 import ticketsRoutes from "../modules/tickets/routes";
+import messagesRoutes from "../modules/messages/routes";
 
 const router = Router();
 
@@ -25,10 +25,7 @@ router.use("/contacts", contactsRoutes);
 
 router.use("/tickets", ticketsRoutes);
 
-router.get("/tickets/:id/messages", authMiddleware, MessageController.index);
-// router.get('/tickets/:id/messages/:messageId', authMiddleware, handleValidation, MessageController.show)
-router.post("/tickets/messages", authMiddleware, MessageController.store);
-router.post("/tickets/messages/send", authMiddleware, MessageController.sendMessage);
+router.use("/tickets", messagesRoutes);
 
 router.use("/agents", agentsRoutes);
 

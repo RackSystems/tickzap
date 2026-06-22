@@ -2,12 +2,12 @@ import { formatPhoneNumber } from "../../helpers/functions";
 import ContactService from "../../modules/contacts/ContactService";
 import TicketService from "../../modules/tickets/TicketService";
 import ChannelService from "../../modules/channels/ChannelService";
-import MessageService from "../services/MessageService";
+import MessageService from "../../modules/messages/MessageService";
 import { MediaType, MessageType, TicketStatus } from '../../config/generated/prisma/client';
 import Message from "../integrations/evolution/Message";
 import StorageService from "./StorageService";
 import AgentService from "../../modules/agents/AgentService";
-import { messageQueue } from "../queues/messageQueue";
+import { messageQueue } from "../../modules/messages/messageQueue";
 import { broadcastToChannel, broadcastToWatchingTicket } from "../../websocket";
 import { truncateWithoutCuttingWord } from "../../modules/tickets/TicketHelper";
 

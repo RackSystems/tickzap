@@ -1,7 +1,7 @@
 import { Worker, Job } from "bullmq";
 import IORedis from "ioredis";
-import Agent from "../integrations/agno/Agent";
-import sendMessage from "../services/MessageService";
+import Agent from "../../app/integrations/agno/Agent";
+import sendMessage from "./MessageService";
 import {broadcastToChannel, broadcastToWatchingTicket} from "../../websocket";
 import {truncateWithoutCuttingWord} from '../../modules/tickets/TicketHelper'
 

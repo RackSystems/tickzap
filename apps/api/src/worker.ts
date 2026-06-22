@@ -1,3 +1,3 @@
-import "./app/jobs/messageJob";
+import "./modules/messages/messageJob";
 
 console.log("Worker process started");

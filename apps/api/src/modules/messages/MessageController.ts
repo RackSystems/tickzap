@@ -1,5 +1,5 @@
 import {Request, Response} from 'express'
-import MessageService from "../services/MessageService";
+import MessageService from "./MessageService";
 
 export default {
   async index(req: Request, res: Response): Promise<void> {
