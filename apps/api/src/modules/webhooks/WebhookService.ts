@@ -3,7 +3,7 @@ import ContactService from "../../modules/contacts/ContactService";
 import TicketService from "../../modules/tickets/TicketService";
 import ChannelService from "../../modules/channels/ChannelService";
 import MessageService from "../../modules/messages/MessageService";
-import { MediaType, MessageType, TicketStatus } from '../../config/generated/prisma/client';
+import type { MediaType } from "../../config/schema";
 import Message from "../../app/integrations/evolution/Message";
 import StorageService from "../../modules/storage/StorageService";
 import AgentService from "../../modules/agents/AgentService";
@@ -47,7 +47,7 @@ export default {
       ticket ??= await TicketService.store({
         contactId: contact.id,
         channelId: channel.id,
-        status: TicketStatus.PENDING,
+        status: "PENDING",
       });
 
       const validMediaTypes = ["imageMessage", "videoMessage", "audioMessage", "documentMessage", "stickerMessage"];
@@ -104,7 +104,7 @@ export default {
         content: content,
         mediaUrl: mediaUrl,
         mediaType: mediaType,
-        type: MessageType.CLIENT,
+        type: "CLIENT",
         sentAt: new Date(messageTimestamp * 1000),
       });
 
@@ -125,7 +125,7 @@ export default {
 
       console.log(`Message created successfully: ${key.id}`);
       //AI agent process message answer
-      if (ticket.useAI && content) {
+      if (ticket.useAi && content) {
         const payload = {
           message: content,
           session_id: ticket.id,

@@ -1,7 +1,7 @@
 import {S3Client, PutObjectCommand, GetObjectCommand} from "@aws-sdk/client-s3";
 import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
 import {UploadParams} from "./StorageInterface";
-import {MediaType, MessageType, TicketStatus} from '../../config/generated/prisma/enums';
+import type { MediaType } from "../../config/schema";
 import HttpException from "../../app/exceptions/HttpException";
 
 
@@ -126,13 +126,13 @@ export default {
     // Determina o tipo de mídia baseado no mimetype
     let mediaType: MediaType | null = null;
     if (mimeType.startsWith('image/')) {
-      mediaType = MediaType.IMAGE;
+      mediaType = "IMAGE";
     } else if (mimeType.startsWith('video/')) {
-      mediaType = MediaType.VIDEO;
+      mediaType = "VIDEO";
     } else if (mimeType.startsWith('audio/')) {
-      mediaType = MediaType.AUDIO;
+      mediaType = "AUDIO";
     } else if (mimeType.startsWith('application/') || mimeType.startsWith('text/')) {
-      mediaType = MediaType.DOCUMENT;
+      mediaType = "DOCUMENT";
     }
 
     return { mediaUrl, mediaType };
