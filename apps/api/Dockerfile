@@ -16,8 +16,6 @@ RUN bun install --filter api --verbose
 # copy api
 COPY apps/api apps/api
 
-RUN bunx prisma generate --schema=apps/api/prisma/schema.prisma
-
 EXPOSE 3000
 
 CMD ["bun", "run", "dev:api"]
