@@ -1,39 +1,23 @@
-import { Message, Prisma, TicketStatus } from '../../config/generated/prisma/client';
+import { asc, eq } from "drizzle-orm";
 import message from "../../app/integrations/evolution/Message";
-import prisma from "../../config/database";
+import db from "../../config/drizzle";
+import { message as messageTable, ticket, type MediaType } from "../../config/schema";
 import StorageService from "../../modules/storage/StorageService";
 import HttpException from "../../app/exceptions/HttpException";
 import ContactService from "../../modules/contacts/ContactService";
 import TicketService from "../../modules/tickets/TicketService";
 import ChannelService from "../../modules/channels/ChannelService";
 import { messageQueue } from "./messageQueue";
-import {broadcastToChannel, broadcastToWatchingTicket} from "../../websocket";
-import {truncateWithoutCuttingWord} from "../../modules/tickets/TicketHelper";
+import { broadcastToChannel, broadcastToWatchingTicket } from "../../websocket";
+import { truncateWithoutCuttingWord } from "../../modules/tickets/TicketHelper";
+
+type Message = typeof messageTable.$inferSelect;
+type NewMessage = typeof messageTable.$inferInsert;
 
 type MediaMessage = {
   mediaType: MediaType;
   mediaUrl: string;
 };
-
-enum MessageStatus {
-  SEND = "SEND",
-  RECEIVED = "RECEIVED",
-  READ = "READ",
-  FAILED = "FAILED",
-}
-
-enum MediaType {
-  IMAGE = "IMAGE",
-  AUDIO = "AUDIO",
-  VIDEO = "VIDEO",
-  DOCUMENT = "DOCUMENT",
-}
-
-enum MessageType {
-  USER = "USER",
-  CLIENT = "CLIENT",
-  BOT = "BOT",
-}
 
 /**
  * ao receber a mensagem (vem pelo webhook e ele cria o ticket) tem o ticketId, vai salvar no banco,
@@ -41,9 +25,9 @@ enum MessageType {
  *
  **/
 export default {
-  async store({ channelId, ...data }: Prisma.MessageUncheckedCreateInput & { channelId?: string }): Promise<Message> {
+  async store({ channelId, ...data }: NewMessage & { channelId?: string }): Promise<Message> {
     if (data.ticketId && !data.status) {
-      data.status = MessageStatus.RECEIVED;
+      data.status = "RECEIVED";
     }
 
     if (!data.ticketId) {
@@ -51,17 +35,18 @@ export default {
         throw new HttpException("channelId é obrigatório para criar um ticket", 400);
       }
 
-      const createdTicket = await prisma.ticket.create({
-        data: {
+      const [createdTicket] = await db
+        .insert(ticket)
+        .values({
           contactId: data.contactId,
           channelId,
-          status: TicketStatus.PENDING,
-          UserId: data.userId,
-        },
-      });
+          status: "PENDING",
+          userId: data.userId,
+        })
+        .returning();
 
       data.ticketId = createdTicket.id;
-      data.status = MessageStatus.SEND;
+      data.status = "SEND";
     }
 
     if (data.mediaType && data.mediaUrl) {
@@ -70,19 +55,19 @@ export default {
       data = { ...data, ...mediaMessage };
     }
 
-    return prisma.message.create({ data });
+    const [created] = await db.insert(messageTable).values(data).returning();
+    return created;
   },
 
   async index(ticketId: string): Promise<Message[]> {
-    const messages = await prisma.message.findMany({
-      where: { ticketId },
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
+    const messages = await db
+      .select()
+      .from(messageTable)
+      .where(eq(messageTable.ticketId, ticketId))
+      .orderBy(asc(messageTable.createdAt));
 
     return Promise.all(
-      messages.map(async (message: any) => {
+      messages.map(async (message) => {
         if (message.mediaUrl) {
           try {
             message.mediaUrl = await StorageService.getSignedUrl(message.mediaUrl);
@@ -95,38 +80,37 @@ export default {
     );
   },
 
-  async show(filter: Prisma.MessageWhereUniqueInput): Promise<Message | null> {
-    return prisma.message.findUnique({
-      where: filter,
-    });
+  async show(filter: { id: string }): Promise<Message | null> {
+    const [found] = await db.select().from(messageTable).where(eq(messageTable.id, filter.id)).limit(1);
+    return found ?? null;
   },
 
   processMidea: function (mediaType: string, mediaUrl: string): MediaMessage {
     let mediaMessage: MediaMessage;
     switch (mediaType) {
-      case MediaType.IMAGE:
+      case "IMAGE":
         mediaMessage = {
-          mediaType: MediaType.IMAGE,
+          mediaType: "IMAGE",
           mediaUrl: mediaUrl,
         };
         break;
-      case MediaType.AUDIO:
+      case "AUDIO":
         mediaMessage = {
-          mediaType: MediaType.AUDIO,
-          mediaUrl: mediaUrl,
-        };
-        break;
-
-      case MediaType.VIDEO:
-        mediaMessage = {
-          mediaType: MediaType.VIDEO,
+          mediaType: "AUDIO",
           mediaUrl: mediaUrl,
         };
         break;
 
-      case MediaType.DOCUMENT:
+      case "VIDEO":
         mediaMessage = {
-          mediaType: MediaType.DOCUMENT,
+          mediaType: "VIDEO",
+          mediaUrl: mediaUrl,
+        };
+        break;
+
+      case "DOCUMENT":
+        mediaMessage = {
+          mediaType: "DOCUMENT",
           mediaUrl: mediaUrl,
         };
         break;
@@ -152,36 +136,38 @@ export default {
     }
 
     //criar ticket ao enviar a primeira mensagem - iniciar conversa
-    let ticket;
+    let ticketRecord;
     if (!data.ticketId) {
-      ticket = await prisma.ticket.create({
-        data: {
+      const [createdTicket] = await db
+        .insert(ticket)
+        .values({
           contactId: data.contactId,
           channelId: channel.id,
-          status: TicketStatus.PENDING,
-          UserId: data.userId,
-        },
-      });
+          status: "PENDING",
+          userId: data.userId,
+        })
+        .returning();
+      ticketRecord = createdTicket;
     } else {
-      ticket = await TicketService.show({ id: data.ticketId });
+      ticketRecord = await TicketService.show({ id: data.ticketId });
     }
 
-    if (!ticket) {
+    if (!ticketRecord) {
       throw new HttpException("Esse ticket não foi encontrado", 404);
     }
 
-    if (ticket.status === TicketStatus.CLOSED) {
+    if (ticketRecord.status === "CLOSED") {
       throw new HttpException("Ticket fechado", 400);
     }
 
     try {
-      const messageToStore: Prisma.MessageUncheckedCreateInput = {
+      const messageToStore: NewMessage = {
         id: "",
-        ticketId: ticket.id,
+        ticketId: ticketRecord.id,
         contactId: contact.id,
         content: data.content,
-        type: MessageType.USER,
-        status: MessageStatus.SEND,
+        type: "USER",
+        status: "SEND",
         sentAt: new Date(), // pegar do response
       };
 
@@ -216,33 +202,31 @@ export default {
         });
 
         messageToStore.mediaUrl = data.mediaUrl;
-        messageToStore.mediaType = MediaType.AUDIO;
+        messageToStore.mediaType = "AUDIO";
       }
 
       if (!response?.key?.id) {
         throw new HttpException("Resposta inesperada da API Evolution", 500);
       }
 
-      // @ts-ignore
       messageToStore.id = response.key.id;
 
       const storedMessage = await this.store(messageToStore);
 
       //notify frontend for new user answer
-      await broadcastToWatchingTicket(ticket.id, {
-        type: 'newMessage',
+      await broadcastToWatchingTicket(ticketRecord.id, {
+        type: "newMessage",
         message: storedMessage,
-        from: 'user',
+        from: "user",
       });
 
       await broadcastToChannel(channel.id, {
-        type: 'ticketUpdated',
-        ticketId: ticket.id,
+        type: "ticketUpdated",
+        ticketId: ticketRecord.id,
         lastMessage: truncateWithoutCuttingWord(storedMessage.content),
         updatedAt: new Date().toISOString(),
         hasNewMessage: false,
       });
-
     } catch (error) {
       console.log(error);
       throw new HttpException("Falha ao enviar mensagem", 500);
