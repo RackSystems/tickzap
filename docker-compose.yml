@@ -40,11 +40,11 @@ services:
       - "9001:9001" # Porta da Interface Web
 
   database:
-    image: postgres:18-alpine
+    image: postgres:latest
     environment:
-      - POSTGRES_USER='tickzap'
-      - POSTGRES_PASSWORD='secret'
-      - POSTGRES_DB='tickzap'
+      POSTGRES_USER: 'user'
+      POSTGRES_PASSWORD: 'secret'
+      POSTGRES_DB: 'tickzap'
     volumes:
       - db_data:/var/lib/postgresql
     ports:
@@ -57,7 +57,6 @@ services:
 
 volumes:
   db_data:
-    name: tickzap_db_data
   minio_data:
     name: tickzap_minio_data
 
