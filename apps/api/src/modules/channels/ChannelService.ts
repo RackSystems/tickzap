@@ -1,6 +1,10 @@
-import { Channel, Prisma } from '../../config/generated/prisma/client';
+import { and, eq, ilike, type SQL } from "drizzle-orm";
 import Instance from "../../app/integrations/evolution/Instance";
-import prisma from "../../config/database";
+import db from "../../config/drizzle";
+import { channel } from "../../config/schema";
+
+type Channel = typeof channel.$inferSelect;
+type NewChannel = typeof channel.$inferInsert;
 
 type IndexQueryParams = {
   type?: string;
@@ -11,7 +15,7 @@ type IndexQueryParams = {
 };
 
 export default {
-  async store(data: Channel): Promise<Channel> {
+  async store(data: NewChannel): Promise<Channel> {
     const payload = {
       instanceName: data.name,
       integration: "WHATSAPP-BAILEYS",
@@ -26,61 +30,70 @@ export default {
 
     await this.setWebhook(response.instance.instanceName);
 
-    const channelData = {
-      ...data,
-      status: response.instance.status,
-      identifier: response.instance.instanceId,
-      name: response.instance.instanceName,
-    };
+    const [created] = await db
+      .insert(channel)
+      .values({
+        ...data,
+        status: response.instance.status,
+        identifier: response.instance.instanceId,
+        name: response.instance.instanceName,
+      })
+      .returning();
 
-    return prisma.channel.create({ data: channelData });
+    return created;
   },
 
   async destroy(id: string): Promise<Channel> {
-    const channel = await this.show({ id });
+    const found = await this.show({ id });
 
-    if (!channel) {
+    if (!found) {
       throw new Error("Channel not found");
     }
 
-    if (channel.status === "open") {
-      await Instance.logout(channel.name);
+    if (found.status === "open") {
+      await Instance.logout(found.name);
     }
 
-    await Instance.destroy(channel.name);
+    await Instance.destroy(found.name);
 
-    return prisma.channel.delete({
-      where: { id },
-    });
+    const [deleted] = await db.delete(channel).where(eq(channel.id, id)).returning();
+    return deleted;
   },
 
   async index(queryParams: IndexQueryParams): Promise<Channel[]> {
-    const where: Prisma.ChannelWhereInput = {};
+    const conditions: SQL[] = [];
 
     if (queryParams.type) {
-      where.name = { contains: queryParams.type, mode: "insensitive" };
+      conditions.push(ilike(channel.name, `%${queryParams.type}%`));
     }
 
     if (queryParams.status) {
-      where.status = { contains: queryParams.status, mode: "insensitive" };
+      conditions.push(ilike(channel.status, `%${queryParams.status}%`));
     }
 
-    return prisma.channel.findMany({
-      where,
-    });
+    return db
+      .select()
+      .from(channel)
+      .where(conditions.length ? and(...conditions) : undefined);
   },
 
-  async show(filter: Prisma.ChannelWhereUniqueInput): Promise<Channel | null> {
-    return prisma.channel.findUnique({
-      where: filter,
-    });
+  async show(filter: { id?: string; identifier?: string }): Promise<Channel | null> {
+    const condition = filter.id
+      ? eq(channel.id, filter.id)
+      : filter.identifier
+        ? eq(channel.identifier, filter.identifier)
+        : undefined;
+    if (!condition) {
+      return null;
+    }
+
+    const [found] = await db.select().from(channel).where(condition).limit(1);
+    return found ?? null;
   },
 
-  async update(id: string, data: Partial<Channel>): Promise<Channel> {
-    return prisma.channel.update({
-      where: { id },
-      data,
-    });
+  async update(id: string, data: Partial<NewChannel>): Promise<Channel> {
+    const [updated] = await db.update(channel).set(data).where(eq(channel.id, id)).returning();
+    return updated;
   },
 
   async connect(instanceId: string): Promise<any> {
