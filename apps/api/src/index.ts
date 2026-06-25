@@ -3,6 +3,7 @@ import routes from './routes/api';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import ErrorHandler from "./app/middlewares/ErrorHandler";
+import { notFoundHandler } from "./app/middlewares/notFoundHandler";
 // import { initGlobalWebSocket } from './websocket';
 
 const app: Express = express();
@@ -16,7 +17,8 @@ app.use(cors({
 
 app.use('/', routes);
 
-app.use(ErrorHandler)
+app.use(notFoundHandler);
+app.use(ErrorHandler);
 
 const port = process.env.PORT ?? 3000;
 

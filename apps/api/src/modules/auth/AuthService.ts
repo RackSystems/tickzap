@@ -15,7 +15,7 @@ export default {
     return user.id;
   },
 
-  async me(userId: string): Promise<Object> {
+  async me(userId: string): Promise<object> {
     const user = await userService.show({id: userId});
 
     if (!user) {
