@@ -3,10 +3,12 @@ import db from "../../config/drizzle";
 import { user } from "../../config/schema";
 import { UserStatus } from "./UserStatusEnum";
 import { isValidUserStatus } from "./UserHelper";
-import HttpException from "../../app/exceptions/HttpException";
+import NotFoundException from "../../app/exceptions/NotFoundException";
+import ConflictException from "../../app/exceptions/ConflictException";
+import BadRequestException from "../../app/exceptions/BadRequestException";
+import type { CreateUserDTO, UpdateUserDTO } from "./UserValidator";
 
 type User = typeof user.$inferSelect;
-type NewUser = typeof user.$inferInsert;
 
 type UserQuery = {
   name?: string;
@@ -60,16 +62,33 @@ export default {
     return found ?? null;
   },
 
-  async store(data: NewUser): Promise<User> {
+  async store(data: CreateUserDTO): Promise<User> {
+    const existing = await this.show({ email: data.email });
+    if (existing) {
+      throw new ConflictException("Esse email já está em uso");
+    }
+
     const password = await Bun.password.hash(data.password, { algorithm: "bcrypt", cost: 12 });
     const [created] = await db
       .insert(user)
-      .values({ ...data, password })
+      .values({ name: data.name, email: data.email, password })
       .returning();
     return created;
   },
 
-  async update(id: string, data: Partial<NewUser>): Promise<User> {
+  async update(id: string, data: UpdateUserDTO): Promise<User> {
+    const found = await findById(id);
+    if (!found) {
+      throw new NotFoundException("Usuário não encontrado");
+    }
+
+    if (data.email && data.email !== found.email) {
+      const existing = await this.show({ email: data.email });
+      if (existing) {
+        throw new ConflictException("Esse email já está em uso");
+      }
+    }
+
     const [updated] = await db.update(user).set(data).where(eq(user.id, id)).returning();
     return updated;
   },
@@ -77,11 +96,11 @@ export default {
   async destroy(id: string): Promise<User> {
     const found = await findById(id);
     if (!found) {
-      throw new HttpException("Usuário não encontrado", 404);
+      throw new NotFoundException("Usuário não encontrado");
     }
 
     if (found.isActive) {
-      throw new HttpException("Usuário ativo, desative antes de excluir", 400);
+      throw new BadRequestException("Usuário ativo, desative antes de excluir");
     }
 
     const [deleted] = await db.delete(user).where(eq(user.id, id)).returning();
@@ -91,11 +110,10 @@ export default {
   async changeStatus(id: string, status: string): Promise<User | null> {
     const found = await findById(id);
     if (!found) {
-      throw new HttpException("Usuário não encontrado", 404);
+      throw new NotFoundException("Usuário não encontrado");
     }
 
     const newStatus = isValidUserStatus(status) ? status : UserStatus.OFFLINE;
-
     const [updated] = await db.update(user).set({ status: newStatus }).where(eq(user.id, id)).returning();
     return updated;
   },
@@ -103,7 +121,7 @@ export default {
   async enableOrDisable(id: string): Promise<User | null> {
     const found = await findById(id);
     if (!found) {
-      throw new HttpException("Usuário não encontrado", 404);
+      throw new NotFoundException("Usuário não encontrado");
     }
 
     const newIsActive = !found.isActive;

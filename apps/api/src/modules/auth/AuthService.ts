@@ -1,8 +1,9 @@
 import userService from "../../modules/users/UserService";
+import NotFoundException from "../../app/exceptions/NotFoundException";
 
 export default {
-  authenticate: async function (email: string, password: string): Promise<null | string> {
-    const user = await userService.show({email});
+  async authenticate(email: string, password: string): Promise<null | string> {
+    const user = await userService.show({ email });
     if (!user) {
       return null;
     }
@@ -16,10 +17,9 @@ export default {
   },
 
   async me(userId: string): Promise<object> {
-    const user = await userService.show({id: userId});
-
+    const user = await userService.show({ id: userId });
     if (!user) {
-      throw new Error('Usuário não encontrado')
+      throw new NotFoundException("Usuário não encontrado");
     }
 
     return {
@@ -28,7 +28,7 @@ export default {
       email: user.email,
       avatar: user.avatar,
       status: user.status,
-      isActive: user.isActive
-    }
-  }
-}
+      isActive: user.isActive,
+    };
+  },
+};

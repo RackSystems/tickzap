@@ -1,33 +1,28 @@
-import { body } from "express-validator";
-import UserService from "./UserService";
+import { z } from "zod";
 
-export const validateUserStore = [
-  body("name").notEmpty().withMessage("Nome é obrigatório"),
-  body("email").notEmpty().isEmail().withMessage("E-mail inválido"),
-  body("email").custom(async (value) => {
-    const user = await UserService.show({ email: value });
-    if (user) {
-      throw new Error("Esse email já está em uso");
-    }
-  }),
-  body("password").notEmpty().isLength({ min: 6 }).withMessage("Senha deve ter no mínimo 6 caracteres"),
-];
+export const createUserSchema = z
+  .object({
+    name: z.string().min(1).max(255),
+    email: z.email(),
+    password: z.string().min(6).max(32),
+    passwordConfirmation: z.string().min(6).max(32),
+  })
+  .refine((data) => data.password === data.passwordConfirmation, {
+    path: ["passwordConfirmation"],
+    error: "As senhas não conferem",
+  });
 
-export const validateUserUpdate = [
-  body("name").optional().notEmpty().withMessage("Nome não pode ser vazio"),
-  body("email").optional().isEmail().withMessage("E-mail inválido"),
-  body("email").custom(async (value) => {
-    const user = await UserService.show({ email: value });
-    if (user) {
-      throw new Error("Esse email já está em uso");
-    }
-  }),
-  body("password").optional().isLength({ min: 6 }).withMessage("Senha deve ter no mínimo 6 caracteres"),
-];
+export const updateUserSchema = z.object({
+  name: z.string().min(1).max(255).optional(),
+  email: z.email().optional(),
+});
 
-//TODO - body('status').isIn(['OFFLINE', 'ONLINE', 'IDLE', 'BUSY', 'AWAY']).withMessage("Status inválido"),
-export const validateUserStatus = [
-  body("status").optional().notEmpty().withMessage("Status não pode ser vazio"),
-  body("status").isString().withMessage("Status deve ser uma string"),
-  body("status").customSanitizer((value: string) => value.toLowerCase()),
-];
+export const changeStatusSchema = z.object({
+  status: z
+    .string()
+    .min(1)
+    .transform((value) => value.toLowerCase()),
+});
+
+export type CreateUserDTO = z.infer<typeof createUserSchema>;
+export type UpdateUserDTO = z.infer<typeof updateUserSchema>;
