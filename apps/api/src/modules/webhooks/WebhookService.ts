@@ -1,6 +1,6 @@
 import { formatPhoneNumber } from "../../helpers/functions";
 import ContactService from "../../modules/contacts/ContactService";
-import TicketService from "../../modules/tickets/TicketService";
+import ConversationService from "../../modules/conversations/ConversationService";
 import ChannelService from "../../modules/channels/ChannelService";
 import MessageService from "../../modules/messages/MessageService";
 import type { MediaType } from "../../config/schema";
@@ -8,8 +8,8 @@ import Message from "../../app/integrations/evolution/Message";
 import StorageService from "../../modules/storage/StorageService";
 import AgentService from "../../modules/agents/AgentService";
 import { messageQueue } from "../../modules/messages/messageQueue";
-import { broadcastToChannel, broadcastToWatchingTicket } from "../../websocket";
-import { truncateWithoutCuttingWord } from "../../modules/tickets/TicketHelper";
+import { broadcastToChannel, broadcastToWatchingConversation } from "../../websocket";
+import { truncateWithoutCuttingWord } from "../../modules/conversations/ConversationHelper";
 
 const messageTypeToMediaTypeMap: Record<string, MediaType> = {
   imageMessage: "IMAGE",
@@ -43,8 +43,8 @@ export default {
         channelId: channel.id,
       });
 
-      let ticket = await TicketService.show({ contactId: contact.id, channelId: channel.id });
-      ticket ??= await TicketService.store({
+      let conversation = await ConversationService.show({ contactId: contact.id, channelId: channel.id });
+      conversation ??= await ConversationService.store({
         contactId: contact.id,
         channelId: channel.id,
         status: "PENDING",
@@ -66,7 +66,6 @@ export default {
           convertToMp4: false,
         };
 
-        // type MediaResponse = { base64: string; fileName: string; mimetype: string; };
         const response = await Message.convertMedia(payload.instance, payloadForApi);
 
         const base64Data = response.base64;
@@ -82,7 +81,7 @@ export default {
         // @ts-ignore
         const mime = response.mimetype;
 
-        const fileKey = `tickets/${ticket.id}/${fileName}`;
+        const fileKey = `conversations/${conversation.id}/${fileName}`;
 
         mediaUrl = await StorageService.upload({
           buffer: fileBuffer,
@@ -99,7 +98,7 @@ export default {
 
       const createdMessage = await MessageService.store({
         id: key.id,
-        ticketId: ticket.id,
+        conversationId: conversation.id,
         contactId: contact.id,
         content: content,
         mediaUrl: mediaUrl,
@@ -108,27 +107,26 @@ export default {
         sentAt: new Date(messageTimestamp * 1000),
       });
 
-      //notify frontend for new contact message
-      await broadcastToWatchingTicket(ticket.id, {
+      await broadcastToWatchingConversation(conversation.id, {
         type: 'newMessage',
         message: createdMessage,
         from: 'client',
       });
 
       await broadcastToChannel(channel.id, {
-        type: 'ticketUpdated',
-        ticketId: ticket.id,
+        type: 'conversationUpdated',
+        conversationId: conversation.id,
         lastMessage: truncateWithoutCuttingWord(createdMessage.content),
         updatedAt: new Date().toISOString(),
         hasNewMessage: true
       });
 
       console.log(`Message created successfully: ${key.id}`);
-      //AI agent process message answer
-      if (ticket.useAi && content) {
-        const payload = {
+
+      if (conversation.useAi && content) {
+        const agentPayload = {
           message: content,
-          session_id: ticket.id,
+          session_id: conversation.id,
           user_id: contact.id,
           channelId: channel.id,
         };
@@ -138,7 +136,7 @@ export default {
 
         await messageQueue.add(
           "process-message",
-          { agentId, payload },
+          { agentId, payload: agentPayload },
           {
             backoff: 5000,
             removeOnComplete: true,
@@ -151,19 +149,15 @@ export default {
     }
   },
 
-  // Placeholder methods for future implementation
   async handleQrCodeUpdated(payload: any): Promise<void> {
-    // Implementation for QR code updates
     console.log("QR Code updated event received but not yet implemented");
   },
 
   async handleConnectionUpdate(payload: any): Promise<void> {
-    // Implementation for connection status updates
     console.log("Connection update event received but not yet implemented");
   },
 
   async handleContactsUpdate(payload: any): Promise<void> {
-    // Implementation for contact updates
     console.log("Contacts update event received but not yet implemented");
   },
 

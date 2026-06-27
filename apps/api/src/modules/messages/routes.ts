@@ -2,7 +2,7 @@ import { Router } from "express";
 import MessageController from "./MessageController";
 import { authMiddleware } from "../../app/middlewares/authMiddleware";
 
-// Rotas de mensagens são escopadas por ticket — montadas sob o prefixo "/tickets".
+// Rotas de mensagens são escopadas por conversation — montadas sob o prefixo "/conversations".
 const router = Router();
 
 router.get("/:id/messages", authMiddleware, MessageController.index);

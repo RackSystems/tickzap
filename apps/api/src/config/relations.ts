@@ -1,9 +1,9 @@
 import { relations } from "drizzle-orm";
-import { channel, contact, ticket, message, user } from "./schema";
+import { channel, contact, conversation, message, user } from "./schema";
 
 export const channelRelations = relations(channel, ({ many }) => ({
   contacts: many(contact),
-  tickets: many(ticket),
+  conversations: many(conversation),
 }));
 
 export const contactRelations = relations(contact, ({ one, many }) => ({
@@ -12,34 +12,34 @@ export const contactRelations = relations(contact, ({ one, many }) => ({
     references: [channel.id],
   }),
   messages: many(message),
-  tickets: many(ticket),
+  conversations: many(conversation),
 }));
 
 export const userRelations = relations(user, ({ many }) => ({
   messages: many(message),
-  tickets: many(ticket),
+  conversations: many(conversation),
 }));
 
-export const ticketRelations = relations(ticket, ({ one, many }) => ({
+export const conversationRelations = relations(conversation, ({ one, many }) => ({
   contact: one(contact, {
-    fields: [ticket.contactId],
+    fields: [conversation.contactId],
     references: [contact.id],
   }),
   channel: one(channel, {
-    fields: [ticket.channelId],
+    fields: [conversation.channelId],
     references: [channel.id],
   }),
   user: one(user, {
-    fields: [ticket.userId],
+    fields: [conversation.userId],
     references: [user.id],
   }),
   messages: many(message),
 }));
 
 export const messageRelations = relations(message, ({ one }) => ({
-  ticket: one(ticket, {
-    fields: [message.ticketId],
-    references: [ticket.id],
+  conversation: one(conversation, {
+    fields: [message.conversationId],
+    references: [conversation.id],
   }),
   user: one(user, {
     fields: [message.userId],

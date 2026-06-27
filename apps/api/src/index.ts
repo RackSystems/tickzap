@@ -25,7 +25,7 @@ const port = process.env.PORT ?? 3000;
 const server = app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 
-  //initialize websockets - global and by ticket
-  // initTicketWebSocket(server);
+  //initialize websockets - global and by conversation
+  // initConversationWebSocket(server);
   // initGlobalWebSocket(server);
 });

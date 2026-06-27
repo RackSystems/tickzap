@@ -22,7 +22,7 @@ export const useTicketStore = defineStore('tickets', () => {
       const response = await apiClient.get('/tickets');
       tickets.value = response.data as Ticket[];
     } catch (error) {
-      handleApiError(error, 'Oops! Ocorreu um erro ao carregar os tickets.');
+      handleApiError(error, 'Oops! Ocorreu um erro ao carregar os atendimentos.');
     } finally {
       isLoading.value = false;
     }

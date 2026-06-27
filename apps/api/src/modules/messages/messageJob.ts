@@ -2,8 +2,8 @@ import { Worker, Job } from "bullmq";
 import IORedis from "ioredis";
 import Agent from "../../app/integrations/agno/Agent";
 import sendMessage from "./MessageService";
-import {broadcastToChannel, broadcastToWatchingTicket} from "../../websocket";
-import {truncateWithoutCuttingWord} from '../../modules/tickets/TicketHelper'
+import {broadcastToChannel, broadcastToWatchingConversation} from "../../websocket";
+import {truncateWithoutCuttingWord} from '../../modules/conversations/ConversationHelper'
 
 const redisURL = process.env.REDIS_URL as string;
 
@@ -23,14 +23,14 @@ const messageWorker = new Worker(
 
     if (response.message) {
       /*
-       * ticketId: payload.session_id,
+       * conversationId: payload.session_id,
        * contactId: payload.contact_id,
        * content: response.message,
        * type: "BOT",
        * */
 
       await sendMessage.sendMessage({
-        ticketId: payload.session_id,
+        conversationId: payload.session_id,
         contactId: payload.user_id,
         content: response.message,
         type: "BOT",
@@ -46,10 +46,10 @@ messageWorker.on("completed", async (job: Job) => {
   const { session_id, user_id, channelId } = job.data.payload;
   const response = job.data.response;
 
-  await broadcastToWatchingTicket(job.data.payload.session_id, {
+  await broadcastToWatchingConversation(job.data.payload.session_id, {
     type: "messageProcessed",
     jobId: job.id,
-    ticketId: session_id,
+    conversationId: session_id,
     contactId: user_id,
     message: response?.message,
     timestamp: new Date().toISOString(),
@@ -58,9 +58,9 @@ messageWorker.on("completed", async (job: Job) => {
   //global notification
   if (channelId) {
     await broadcastToChannel(channelId, {
-      type: "ticketUpdated",
+      type: "conversationUpdated",
       jobId: job.id,
-      ticketId: session_id,
+      conversationId: session_id,
       lastMessage: truncateWithoutCuttingWord(response?.message),
       updatedAt: new Date().toISOString(),
       hasNewMessage: true
@@ -73,10 +73,10 @@ messageWorker.on("completed", async (job: Job) => {
 messageWorker.on("failed", async (job: Job | undefined, err: Error) => {
   if (job) {
     console.log(`Job ${job.id} has failed with ${err.message}`);
-    await broadcastToWatchingTicket(job.data.payload.session_id, {
+    await broadcastToWatchingConversation(job.data.payload.session_id, {
       type: "messageProcessingFailed",
       jobId: job.id,
-      ticketId: job.data.payload.session_id,
+      conversationId: job.data.payload.session_id,
       contactId: job.data.payload.user_id,
       error: err.message,
     });

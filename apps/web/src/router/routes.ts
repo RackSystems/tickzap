@@ -23,7 +23,7 @@ export const routes: Array<RouteRecordRaw & { meta: RouteMetaCustom }> = [
   },
 
   {
-    path: '/tickets',
+    path: '/conversations',
     name: 'Tickets',
     component: () => import('@/features/tickets/ChatView.vue'),
     meta: {

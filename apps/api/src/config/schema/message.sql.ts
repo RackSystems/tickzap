@@ -1,7 +1,7 @@
 import { pgTable, text, timestamp, foreignKey, uuid } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.helpers";
 import { mediaTypes, messageStatuses, messageTypes } from "./enums";
-import { ticket } from "./ticket.sql";
+import { conversation } from "./conversation.sql";
 import { contact } from "./contact.sql";
 import { user } from "./user.sql";
 
@@ -9,7 +9,7 @@ export const message = pgTable(
   "messages",
   {
     id: text().primaryKey().notNull(),
-    ticketId: uuid("ticket_id").notNull(),
+    conversationId: uuid("conversation_id").notNull(),
     userId: uuid("user_id"),
     contactId: uuid("contact_id").notNull(),
     content: text().notNull(),
@@ -24,9 +24,9 @@ export const message = pgTable(
   },
   (table) => [
     foreignKey({
-      columns: [table.ticketId],
-      foreignColumns: [ticket.id],
-      name: "messages_ticket_id_fkey",
+      columns: [table.conversationId],
+      foreignColumns: [conversation.id],
+      name: "messages_conversation_id_fkey",
     })
       .onUpdate("cascade")
       .onDelete("restrict"),

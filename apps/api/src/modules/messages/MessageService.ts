@@ -1,15 +1,15 @@
 import { asc, eq } from "drizzle-orm";
 import message from "../../app/integrations/evolution/Message";
 import db from "../../config/drizzle";
-import { message as messageTable, ticket, type MediaType } from "../../config/schema";
+import { message as messageTable, conversation, type MediaType } from "../../config/schema";
 import StorageService from "../../modules/storage/StorageService";
 import HttpException from "../../app/exceptions/HttpException";
 import ContactService from "../../modules/contacts/ContactService";
-import TicketService from "../../modules/tickets/TicketService";
+import ConversationService from "../../modules/conversations/ConversationService";
 import ChannelService from "../../modules/channels/ChannelService";
 import { messageQueue } from "./messageQueue";
-import { broadcastToChannel, broadcastToWatchingTicket } from "../../websocket";
-import { truncateWithoutCuttingWord } from "../../modules/tickets/TicketHelper";
+import { broadcastToChannel, broadcastToWatchingConversation } from "../../websocket";
+import { truncateWithoutCuttingWord } from "../../modules/conversations/ConversationHelper";
 
 type Message = typeof messageTable.$inferSelect;
 type NewMessage = typeof messageTable.$inferInsert;
@@ -19,24 +19,19 @@ type MediaMessage = {
   mediaUrl: string;
 };
 
-/**
- * ao receber a mensagem (vem pelo webhook e ele cria o ticket) tem o ticketId, vai salvar no banco,
- * ao enviar a mensagem, vamos criar o ticket aqui e salvar no banco,
- *
- **/
 export default {
   async store({ channelId, ...data }: NewMessage & { channelId?: string }): Promise<Message> {
-    if (data.ticketId && !data.status) {
+    if (data.conversationId && !data.status) {
       data.status = "RECEIVED";
     }
 
-    if (!data.ticketId) {
+    if (!data.conversationId) {
       if (!channelId) {
-        throw new HttpException("channelId é obrigatório para criar um ticket", 400);
+        throw new HttpException("channelId é obrigatório para criar uma conversa", 400);
       }
 
-      const [createdTicket] = await db
-        .insert(ticket)
+      const [createdConversation] = await db
+        .insert(conversation)
         .values({
           contactId: data.contactId,
           channelId,
@@ -45,12 +40,11 @@ export default {
         })
         .returning();
 
-      data.ticketId = createdTicket.id;
+      data.conversationId = createdConversation.id;
       data.status = "SEND";
     }
 
     if (data.mediaType && data.mediaUrl) {
-      //save path - object key on mediaUrl
       const mediaMessage = this.processMidea(data.mediaType, data.mediaUrl);
       data = { ...data, ...mediaMessage };
     }
@@ -59,11 +53,11 @@ export default {
     return created;
   },
 
-  async index(ticketId: string): Promise<Message[]> {
+  async index(conversationId: string): Promise<Message[]> {
     const messages = await db
       .select()
       .from(messageTable)
-      .where(eq(messageTable.ticketId, ticketId))
+      .where(eq(messageTable.conversationId, conversationId))
       .orderBy(asc(messageTable.createdAt));
 
     return Promise.all(
@@ -89,32 +83,17 @@ export default {
     let mediaMessage: MediaMessage;
     switch (mediaType) {
       case "IMAGE":
-        mediaMessage = {
-          mediaType: "IMAGE",
-          mediaUrl: mediaUrl,
-        };
+        mediaMessage = { mediaType: "IMAGE", mediaUrl };
         break;
       case "AUDIO":
-        mediaMessage = {
-          mediaType: "AUDIO",
-          mediaUrl: mediaUrl,
-        };
+        mediaMessage = { mediaType: "AUDIO", mediaUrl };
         break;
-
       case "VIDEO":
-        mediaMessage = {
-          mediaType: "VIDEO",
-          mediaUrl: mediaUrl,
-        };
+        mediaMessage = { mediaType: "VIDEO", mediaUrl };
         break;
-
       case "DOCUMENT":
-        mediaMessage = {
-          mediaType: "DOCUMENT",
-          mediaUrl: mediaUrl,
-        };
+        mediaMessage = { mediaType: "DOCUMENT", mediaUrl };
         break;
-
       default:
         throw new HttpException(`Tipo de mídia não suportado: ${mediaType}`, 415);
     }
@@ -135,11 +114,10 @@ export default {
       throw new HttpException("Canal não foi encontrado", 404);
     }
 
-    //criar ticket ao enviar a primeira mensagem - iniciar conversa
-    let ticketRecord;
-    if (!data.ticketId) {
-      const [createdTicket] = await db
-        .insert(ticket)
+    let conversationRecord;
+    if (!data.conversationId) {
+      const [createdConversation] = await db
+        .insert(conversation)
         .values({
           contactId: data.contactId,
           channelId: channel.id,
@@ -147,32 +125,31 @@ export default {
           userId: data.userId,
         })
         .returning();
-      ticketRecord = createdTicket;
+      conversationRecord = createdConversation;
     } else {
-      ticketRecord = await TicketService.show({ id: data.ticketId });
+      conversationRecord = await ConversationService.show({ id: data.conversationId });
     }
 
-    if (!ticketRecord) {
-      throw new HttpException("Esse ticket não foi encontrado", 404);
+    if (!conversationRecord) {
+      throw new HttpException("Conversa não encontrada", 404);
     }
 
-    if (ticketRecord.status === "CLOSED") {
-      throw new HttpException("Ticket fechado", 400);
+    if (conversationRecord.status === "CLOSED") {
+      throw new HttpException("Conversa fechada", 400);
     }
 
     try {
       const messageToStore: NewMessage = {
         id: "",
-        ticketId: ticketRecord.id,
+        conversationId: conversationRecord.id,
         contactId: contact.id,
         content: data.content,
         type: "USER",
         status: "SEND",
-        sentAt: new Date(), // pegar do response
+        sentAt: new Date(),
       };
 
       let response;
-      // todo media message
       if (data.mediaType) {
         response = await message.sendMedia(channel.name, {
           media: data.mediaUrl,
@@ -183,19 +160,12 @@ export default {
 
         messageToStore.mediaUrl = data.mediaUrl;
         messageToStore.mediaType = data.mediaType;
-      }
-
-      // text message
-      else if (data.content) {
+      } else if (data.content) {
         response = await message.sendText(channel.name, {
           text: data.content,
           number: contact.phone,
         });
-      }
-
-      // audio message
-      // front end grava o audio, envia para o minio, e o minio retorna o url do audio
-      else {
+      } else {
         response = await message.sendAudio(channel.name, {
           audio: data.mediaUrl,
           number: contact.phone,
@@ -213,16 +183,15 @@ export default {
 
       const storedMessage = await this.store(messageToStore);
 
-      //notify frontend for new user answer
-      await broadcastToWatchingTicket(ticketRecord.id, {
+      await broadcastToWatchingConversation(conversationRecord.id, {
         type: "newMessage",
         message: storedMessage,
         from: "user",
       });
 
       await broadcastToChannel(channel.id, {
-        type: "ticketUpdated",
-        ticketId: ticketRecord.id,
+        type: "conversationUpdated",
+        conversationId: conversationRecord.id,
         lastMessage: truncateWithoutCuttingWord(storedMessage.content),
         updatedAt: new Date().toISOString(),
         hasNewMessage: false,

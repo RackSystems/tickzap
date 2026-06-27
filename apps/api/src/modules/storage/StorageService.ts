@@ -53,7 +53,7 @@ interface UploadMediaParams {
   base64Data: string;
   fileName: string;
   mimeType: string;
-  ticketId: string;
+  conversationId: string;
 }
 
 /**
@@ -104,17 +104,15 @@ export default {
    * Não depende de Message.convertMedia
    */
   async uploadMediaToStorage(params: UploadMediaParams): Promise<UploadMediaResult> {
-    const { base64Data, fileName, mimeType, ticketId } = params;
+    const { base64Data, fileName, mimeType, conversationId } = params;
 
     if (!base64Data || typeof base64Data !== 'string') {
       throw new HttpException('Dados base64 inválidos ou não fornecidos.', 415);
     }
 
-    // Converte base64 para Buffer
     const fileBuffer = Buffer.from(base64Data, 'base64');
 
-    // Define a chave do arquivo no storage
-    const fileKey = `tickets/${ticketId}/${fileName}`;
+    const fileKey = `conversations/${conversationId}/${fileName}`;
 
     // Faz upload para o storage
     const mediaUrl = await this.upload({

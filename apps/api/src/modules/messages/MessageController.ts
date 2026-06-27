@@ -3,14 +3,14 @@ import MessageService from "./MessageService";
 
 export default {
   async index(req: Request, res: Response): Promise<void> {
-    const ticketId = req.params.id as string | undefined;
+    const conversationId = req.params.id as string | undefined;
 
-    if (!ticketId) {
-      res.status(400).json({error: 'ticketId is required in route params'});
+    if (!conversationId) {
+      res.status(400).json({error: 'conversationId is required in route params'});
       return;
     }
 
-    const message = await MessageService.index(ticketId)
+    const message = await MessageService.index(conversationId)
     res.json(message)
   },
 
