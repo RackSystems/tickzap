@@ -35,12 +35,12 @@ const { isUserActive, inactiveMinutes } = useInactivityMonitor(1000, IDLE_TIMEOU
 
 onMounted(() => {
   console.log('STATUS ', currentStatus.value);
-  console.log('is user active ', isUserActive)
+  console.log('is users active ', isUserActive)
 });
 
 onUpdated(() => {
   console.log('STATUS (updated): ', currentStatus.value);
-  console.log('is user active (updated): ', isUserActive)
+  console.log('is users active (updated): ', isUserActive)
 });
 
 watch(isUserActive, (isActive: boolean) => {
