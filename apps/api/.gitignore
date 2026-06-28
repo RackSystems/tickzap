@@ -1,24 +1,2 @@
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-*.iml
-out/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Node
+# deps
 node_modules/
-
-# dotenv
-.env
-.env.*.local
-
-/dist

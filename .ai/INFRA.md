@@ -14,10 +14,10 @@ Monorepo com Bun workspaces: `apps/api` (backend) e `apps/web` (frontend).
 O ambiente roda via `docker compose up`. Os containers montam volumes dos fontes do host:
 
 ```yaml
-# api — monta src e .env
+# api-legacy — monta src e .env
 volumes:
-  - ./apps/api/src:/tickzap/apps/api/src
-  - ./apps/api/.env:/tickzap/apps/api/.env
+  - ./apps/api-legacy/src:/tickzap/apps/api-legacy/src
+  - ./apps/api-legacy/.env:/tickzap/apps/api-legacy/.env
 ```
 
 O entrypoint da API é `bun run dev:api` que executa `bun --watch src/index.ts` — qualquer alteração em arquivos `.ts`

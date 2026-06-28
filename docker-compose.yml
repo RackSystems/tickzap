@@ -2,16 +2,16 @@ name: tickzap
 
 services:
   api:
-    container_name: api
+    container_name: api-legacy
     build:
       context: .
-      dockerfile: apps/api/Dockerfile
+      dockerfile: apps/api-legacy/Dockerfile
     depends_on:
       - database
       - redis
     volumes:
-      - ./apps/api/src:/tickzap/apps/api/src
-      - ./apps/api/.env:/tickzap/apps/api/.env
+      - ./apps/api-legacy/src:/tickzap/apps/api-legacy/src
+      - ./apps/api-legacy/.env:/tickzap/apps/api-legacy/.env
     ports:
       - "3000:3000"
 
