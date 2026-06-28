@@ -24,17 +24,22 @@ Já existe e funciona:
 
 - Monorepo Bun: `apps/api` (Express + Prisma + PostgreSQL + Redis + BullMQ + WebSocket) e `apps/web` (Vue 3).
 - Integração WhatsApp via Evolution API (webhook + envio + QR code de conexão).
-- Modelos: `User`, `Channel`, `Contact`, `Ticket` (PENDING/OPEN/CLOSED, toggle de IA), `Message`, `Agent`.
-- Auth (login/logout/me), CRUD de canais, contatos, tickets, mensagens e agentes.
+- Modelos: `User`, `Channel`, `Contact`, `Conversation` (PENDING/OPEN/CLOSED, toggle de IA), `Message`, `Agent`.
+- Auth (login/logout/me), CRUD de canais, contatos, conversas, mensagens e agentes.
 - Chat de atendimento, dashboard básico e cadastro de agentes de IA no front.
 - IA em repositório separado ([tickzap-ai](https://github.com/RackSystems/tickzap-ai)).
+
+> **Renomeação (jun/2026):** o modelo `Ticket` foi renomeado para `Conversation` (atendimento via WhatsApp).
+> O termo `Ticket` passa a designar o **chamado de suporte** — aberto manualmente por um usuário logado
+> a partir de contato externo (telefone, e-mail, WhatsApp, presencial etc.). O solicitante externo é
+> armazenado no campo `reporter` (JSON). Schema planejado em [plan.md](plan.md).
 
 Lacunas estruturais conhecidas:
 
 - **Sem multi-tenancy** — não há modelo de empresa/conta; hoje o sistema serve uma empresa só.
-- `Ticket` não tem prioridade, categoria, fila nem prazos.
-- Atribuição existe no schema (`Ticket.UserId`) mas não há fluxo/quadro de gestão.
-- Migração em andamento de `app/controllers` para `modules/<domínio>` (`users`, `contacts`, `channels`, `agents` migrados; faltam `tickets`, `messages`, `webhooks`, `auth`). Backlog técnico em [BACKLOG.md](BACKLOG.md).
+- `Ticket` (chamado de suporte) ainda não tem módulo implementado — schema planejado, ver [plan.md](plan.md).
+- Atribuição existe no schema (`Conversation.userId`) mas não há fluxo/quadro de gestão.
+- Migração em andamento de `app/controllers` para `modules/<domínio>` (`users`, `contacts`, `channels`, `agents`, `conversations` migrados; faltam `messages`, `webhooks`, `auth`). Backlog técnico em [BACKLOG.md](BACKLOG.md).
 
 ---
 
@@ -43,7 +48,7 @@ Lacunas estruturais conhecidas:
 Decisões e estruturas que ficam caras de mudar depois.
 
 - [ ] **Multi-tenancy (decidido: SaaS multi-empresa)** — criar modelo `Company`/`Tenant`, vincular `User`, `Channel`, `Contact`, `Ticket`, `Agent` e demais entidades a ele, e escopar todas as queries por tenant desde o início.
-- [ ] Enriquecer `Ticket`: prioridade, categoria, fila/etapa (além de status), prazos.
+- [ ] Implementar `Ticket` (chamado de suporte): prioridade, categoria, source, reporter, assignedTo. Schema detalhado em [plan.md](plan.md).
 - [ ] Papéis de usuário (admin, atendente, técnico de campo).
 - [ ] Continuar migração para `modules/<domínio>` conforme os domínios forem tocados.
 
