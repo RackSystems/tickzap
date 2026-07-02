@@ -8,6 +8,7 @@
   "scripts": {
     "dev:web": "bun run --cwd apps/web dev",
     "dev:api": "bun run --cwd apps/api dev",
+    "dev:ai": "bun run --cwd apps/ai dev",
     "dev": "bun run dev:web & bun run dev:api"
   }
 }

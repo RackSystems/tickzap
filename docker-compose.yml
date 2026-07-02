@@ -15,6 +15,18 @@ services:
     ports:
       - "3000:3000"
 
+  ai:
+    container_name: ai
+    build:
+      context: .
+      dockerfile: apps/ai/Dockerfile
+    depends_on:
+      - api
+    volumes:
+      - ./apps/ai/src:/tickzap/apps/ai/src
+    ports:
+      - "3003:3003"
+
   frontend:
     container_name: frontend
     build:
