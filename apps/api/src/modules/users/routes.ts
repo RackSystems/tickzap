@@ -2,11 +2,6 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import * as UserService from "./user.service";
 import {
-  CannotDeleteActiveUserError,
-  EmailAlreadyInUseError,
-  UserNotFoundError,
-} from "./user.errors";
-import {
   createUserSchema,
   updateUserSchema,
   userIdParamSchema,
@@ -14,23 +9,6 @@ import {
 } from "./user.schema";
 
 const router = new Hono();
-
-router.use(async (c, next) => {
-  try {
-    await next();
-  } catch (err) {
-    if (err instanceof UserNotFoundError) {
-      return c.json({ message: err.message }, 404);
-    }
-    if (err instanceof EmailAlreadyInUseError) {
-      return c.json({ message: err.message }, 409);
-    }
-    if (err instanceof CannotDeleteActiveUserError) {
-      return c.json({ message: err.message }, 400);
-    }
-    throw err;
-  }
-});
 
 router.get("/", zValidator("query", userQuerySchema), async (c) => {
   return c.json(await UserService.list(c.req.valid("query")));
