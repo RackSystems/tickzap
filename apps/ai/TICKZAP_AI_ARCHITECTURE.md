@@ -24,7 +24,9 @@
 ## 🎯 Visão Geral
 
 ### Problema Atual (TickZap-AI Python)
+
 O serviço current (Python + FastAPI + Agno) apresenta:
+
 - ❌ **Integração limitada**: Acoplado a um único stack (Python/FastAPI)
 - ❌ **Escalabilidade manual**: Sem abstrações para multi-tenant
 - ❌ **Dependência de framework específico**: Agno não é agnóstico a provedores
@@ -33,7 +35,9 @@ O serviço current (Python + FastAPI + Agno) apresenta:
 - ❌ **Acoplamento ao WhatsApp**: Webhook específico, difícil de reusar
 
 ### Solução Proposta (TickZap-AI v2)
+
 Stack moderno, agnóstico e escalável:
+
 - ✅ **Vercel AI SDK**: Abstração unificada para 25+ provedores
 - ✅ **Multi-tenant native**: Isolamento automático, configuração por tenant
 - ✅ **Type-safe em TypeScript**: Completo type-safety, autocompletar
@@ -48,6 +52,7 @@ Stack moderno, agnóstico e escalável:
 ## 📊 Análise Comparativa
 
 ### Arquitetura Python (Atual)
+
 ```
 ┌─────────────────────────────────────┐
 │   FastAPI + Uvicorn                 │
@@ -61,6 +66,7 @@ Stack moderno, agnóstico e escalável:
 ```
 
 **Limitações**:
+
 - Agno é framework-specific
 - Sem multi-tenant nativo
 - Sem integração com outros provedores além OpenAI
@@ -68,6 +74,7 @@ Stack moderno, agnóstico e escalável:
 - Sem observabilidade estruturada
 
 ### Arquitetura TypeScript com Vercel AI SDK (Proposto)
+
 ```
 ┌──────────────────────────────────────────────┐
 │        Hono Web Framework                    │
@@ -99,6 +106,7 @@ Stack moderno, agnóstico e escalável:
 ```
 
 **Vantagens**:
+
 - ✅ Agnóstico: trocar provedores sem reescrever lógica
 - ✅ Multi-tenant: isolamento automático
 - ✅ TypeScript: type-safe, autocompletar em IDE
@@ -113,6 +121,7 @@ Stack moderno, agnóstico e escalável:
 ### Camadas da Aplicação
 
 #### 1. **API Layer (Hono Adapter)**
+
 Endpoint agnóstico para qualquer consumidor (WhatsApp, Web, Mobile, etc)
 
 ```
@@ -123,6 +132,7 @@ GET  /api/v1/{tenantId}/analytics
 ```
 
 #### 2. **Agent Orchestration Layer (TenantAgentManager)**
+
 Gerencia agentes por tenant com sessões persistentes
 
 - **Session Management**: Mantém contexto entre requisições
@@ -131,6 +141,7 @@ Gerencia agentes por tenant com sessões persistentes
 - **Tool Management**: Carrega tools específicas por tenant
 
 #### 3. **LLM Integration Layer (Vercel AI SDK)**
+
 Abstração agnóstica para qualquer provedor
 
 - **Model Initialization**: Dynamic provider instantiation
@@ -139,6 +150,7 @@ Abstração agnóstica para qualquer provedor
 - **Output Structuring**: Validação com Zod schemas
 
 #### 4. **Custom Tools Layer**
+
 Ferramentas específicas do negócio
 
 - `CategorizeTool`: Classificar tickets
@@ -148,6 +160,7 @@ Ferramentas específicas do negócio
 - `KnowledgeRetrieverTool`: Busca knowledge base
 
 #### 5. **Data Persistence Layer**
+
 Persistência, cache e auditoria
 
 - **PostgreSQL**: Chat history, patterns, metrics
@@ -266,6 +279,7 @@ tickzap-ai-sdk/
 ```
 
 **Princípios de Organização**:
+
 - **Por Feature**: `agents/`, `tools/`, `services/` são features distintas
 - **Separação de Concerns**: API, orquestração e persistência isoladas
 - **Type Safety**: Tipos centralizados em `types/`
@@ -279,7 +293,9 @@ tickzap-ai-sdk/
 ### Documentação Essencial (Ordem de Leitura)
 
 #### 1. **[Core Concepts](https://ai-sdk.dev/docs/ai-sdk-core)** ⭐⭐⭐ CRÍTICO
+
 Fundação do SDK:
+
 - [ ] Getting Started
 - [ ] Model Configuration
 - [ ] API Overview (generateText, streamText)
@@ -292,7 +308,9 @@ Fundação do SDK:
 ---
 
 #### 2. **[Agents](https://ai-sdk.dev/docs/agents)** ⭐⭐⭐ CRÍTICO
+
 Padrão de agents com loops:
+
 - [ ] Agent Patterns
 - [ ] Tool Use (Function Calling)
 - [ ] Multi-step Execution
@@ -303,7 +321,9 @@ Padrão de agents com loops:
 ---
 
 #### 3. **[Tool Calling](https://ai-sdk.dev/docs/tools/tool-calling)** ⭐⭐⭐ CRÍTICO
+
 Definição e execução de tools:
+
 - [ ] Tool Definition (description, parameters)
 - [ ] Zod Schemas for Validation
 - [ ] Tool Execution Pattern
@@ -315,7 +335,9 @@ Definição e execução de tools:
 ---
 
 #### 4. **[Structured Outputs](https://ai-sdk.dev/docs/structured-data)** ⭐⭐ IMPORTANTE
+
 Validação estruturada de outputs:
+
 - [ ] Output.text()
 - [ ] Output.object()
 - [ ] Output.array()
@@ -327,7 +349,9 @@ Validação estruturada de outputs:
 ---
 
 #### 5. **[Providers](https://ai-sdk.dev/docs/providers)** ⭐⭐ IMPORTANTE
+
 Integração com múltiplos provedores:
+
 - [ ] OpenAI (`@ai-sdk/openai`)
 - [ ] Anthropic (`@ai-sdk/anthropic`)
 - [ ] Google (`@ai-sdk/google`)
@@ -339,7 +363,9 @@ Integração com múltiplos provedores:
 ---
 
 #### 6. **[Embedding Models](https://ai-sdk.dev/docs/embeddings)** ⭐ IMPORTANTE
+
 Geração de embeddings para RAG:
+
 - [ ] Embedding API
 - [ ] Using Different Providers
 - [ ] Storage in Vector DB
@@ -349,7 +375,9 @@ Geração de embeddings para RAG:
 ---
 
 #### 7. **[Observability & DevTools](https://ai-sdk.dev/docs/devtools)** ⭐ IMPORTANTE
+
 Rastreamento e debugging:
+
 - [ ] Enabling DevTools
 - [ ] Accessing Metrics
 - [ ] Production Observability
@@ -388,7 +416,9 @@ export interface ModelConfig {
   temperature?: number;
 }
 
-export async function initializeModel(config: ModelConfig): Promise<LanguageModel> {
+export async function initializeModel(
+  config: ModelConfig,
+): Promise<LanguageModel> {
   switch (config.provider) {
     case "openai":
       return createOpenAI({
@@ -458,13 +488,16 @@ export class TenantAgentManager {
    */
   async processTicket(
     tenantId: string,
-    ticket: { id: string; description: string; customerFeedback?: string }
+    ticket: { id: string; description: string; customerFeedback?: string },
   ) {
     // 1. Sanitizar entrada (LGPD)
     const sanitized = this.sanitizer.sanitizeTicket(ticket);
 
     // 2. Recuperar conhecimento específico do tenant
-    const tenantKnowledge = await getTenantKnowledge(tenantId, sanitized.description);
+    const tenantKnowledge = await getTenantKnowledge(
+      tenantId,
+      sanitized.description,
+    );
 
     // 3. Obter modelo configurado para tenant
     const model = await this.getModel(tenantId);
@@ -616,7 +649,7 @@ export class SessionManager {
    */
   async getSessionHistory(
     tenantId: string,
-    sessionId: string
+    sessionId: string,
   ): Promise<Message[]> {
     const messages = await getSessionHistory(tenantId, sessionId);
     return messages.map((m) => ({
@@ -632,7 +665,7 @@ export class SessionManager {
     tenantId: string,
     sessionId: string,
     role: "user" | "assistant",
-    content: string
+    content: string,
   ) {
     await saveMessage(tenantId, sessionId, role, content);
   }
@@ -644,6 +677,7 @@ export class SessionManager {
 ## 📈 Estratégia de Escalabilidade
 
 ### Fase 1: MVP (Stateless Horizontal)
+
 ```
 ┌─────────────────┐
 │  Load Balancer  │
@@ -659,6 +693,7 @@ export class SessionManager {
 ```
 
 **Características**:
+
 - Instâncias stateless do agente
 - Compartilham BD e cache
 - Escalável horizontalmente via Kubernetes
@@ -666,6 +701,7 @@ export class SessionManager {
 ---
 
 ### Fase 2: Background Jobs
+
 ```
 ┌──────────────────────────────────────┐
 │   API Services (Hono)                │
@@ -685,6 +721,7 @@ export class SessionManager {
 ```
 
 **Tecnologias**:
+
 - `bullmq` para job queue
 - Redis como broker
 - Workers separados para processamento assíncrono
@@ -692,6 +729,7 @@ export class SessionManager {
 ---
 
 ### Fase 3: Distributed Caching & Observability
+
 ```
 ┌──────────────────────────────────────┐
 │   Distributed Tracing (Otel)         │
@@ -720,6 +758,7 @@ export class SessionManager {
 ### Integração com TickZap API (Express)
 
 **Fluxo de Integração**:
+
 ```
 TickZap API (Express)
     ↓
@@ -759,6 +798,7 @@ app.post("/:tenantId/process", async (c) => {
 ### Integração com WhatsApp Gateway
 
 **Sem acoplamento**:
+
 ```
 WhatsApp Gateway
     ↓
@@ -781,7 +821,7 @@ Gateway retorna para WhatsApp
 // Webhook genérico que funciona com qualquer origem
 app.post("/:tenantId/webhook", async (c) => {
   const source = c.req.header("x-source"); // whatsapp, web, sms, etc
-  
+
   const ticket = {
     id: c.req.header("x-ticket-id"),
     description: await c.req.text(),
@@ -798,6 +838,7 @@ app.post("/:tenantId/webhook", async (c) => {
 ## 🚀 Roadmap de Implementação
 
 ### Sprint 1: Setup & Core (2 semanas)
+
 - [ ] Inicializar projeto Bun + Hono
 - [ ] Configurar TypeScript + Zod validation
 - [ ] Setup PostgreSQL + Redis local
@@ -811,6 +852,7 @@ app.post("/:tenantId/webhook", async (c) => {
 ---
 
 ### Sprint 2: Multi-Provider & Observability (2 semanas)
+
 - [ ] Suporte a múltiplos provedores (OpenAI, Anthropic, Ollama)
 - [ ] Vercel AI DevTools integrado
 - [ ] Estrutured outputs com Zod
@@ -823,6 +865,7 @@ app.post("/:tenantId/webhook", async (c) => {
 ---
 
 ### Sprint 3: Knowledge Base & RAG (2 semanas)
+
 - [ ] Setup pgvector no PostgreSQL
 - [ ] Embedding pipeline
 - [ ] `KnowledgeRetrieverTool` com busca vetorial
@@ -834,6 +877,7 @@ app.post("/:tenantId/webhook", async (c) => {
 ---
 
 ### Sprint 4: Production Ready (2 semanas)
+
 - [ ] Kubernetes manifests
 - [ ] CI/CD pipeline
 - [ ] Load testing
@@ -848,6 +892,7 @@ app.post("/:tenantId/webhook", async (c) => {
 ## 📋 Checklist de Implementação
 
 ### Core Infrastructure
+
 - [ ] Projeto Bun inicializado com TypeScript
 - [ ] Hono app rodando localmente
 - [ ] PostgreSQL + pgvector setup
@@ -855,6 +900,7 @@ app.post("/:tenantId/webhook", async (c) => {
 - [ ] Variáveis de ambiente validadas com Zod
 
 ### Agent & LLM
+
 - [ ] TenantAgentManager implementado
 - [ ] Multiple providers funcionando (openai, anthropic, ollama)
 - [ ] Tool calling integrado
@@ -862,6 +908,7 @@ app.post("/:tenantId/webhook", async (c) => {
 - [ ] Vercel AI DevTools ativo
 
 ### Tools Customizados
+
 - [ ] CategorizeTool
 - [ ] RoutingTool
 - [ ] SatisfactionAnalyzerTool
@@ -869,6 +916,7 @@ app.post("/:tenantId/webhook", async (c) => {
 - [ ] KnowledgeRetrieverTool
 
 ### Data Layer
+
 - [ ] Migrations SQL
 - [ ] Chat history persistence
 - [ ] Session management
@@ -876,6 +924,7 @@ app.post("/:tenantId/webhook", async (c) => {
 - [ ] Audit logs
 
 ### Privacy & Security
+
 - [ ] DataSanitizer (remove PII)
 - [ ] Encryption at rest
 - [ ] Tenant isolation
@@ -883,12 +932,14 @@ app.post("/:tenantId/webhook", async (c) => {
 - [ ] LGPD compliance
 
 ### API Endpoints
+
 - [ ] POST /api/v1/:tenantId/process
 - [ ] GET /api/v1/:tenantId/knowledge-base
 - [ ] GET /api/v1/:tenantId/analytics
 - [ ] POST /api/v1/:tenantId/feedback
 
 ### Testing & Monitoring
+
 - [ ] Unit tests (80%+ coverage)
 - [ ] Integration tests
 - [ ] DevTools metrics
@@ -896,6 +947,7 @@ app.post("/:tenantId/webhook", async (c) => {
 - [ ] Error tracking (Sentry)
 
 ### Deployment
+
 - [ ] Docker setup
 - [ ] Kubernetes manifests
 - [ ] CI/CD pipeline
@@ -906,23 +958,24 @@ app.post("/:tenantId/webhook", async (c) => {
 
 ## 💡 Principais Diferenças vs Arquitetura Anterior
 
-| Aspecto | Python (Agno) | TypeScript (Vercel AI SDK) |
-|--------|--------------|---------------------------|
-| **Framework** | Agno (framework-specific) | Vercel AI SDK (agnóstico) |
-| **Type Safety** | Dinâmico | Type-safe (TypeScript) |
-| **Multi-tenant** | Manual | Nativo |
-| **Provedores** | Principalmente OpenAI | 25+ provedores suportados |
-| **Observabilidade** | Manual | DevTools built-in |
-| **Tool Calling** | Via Agno | Via Vercel AI (standardizado) |
-| **Message Management** | Customizado | Estruturado (AI SDK) |
-| **Escalabilidade** | Manual | Preparado para K8s |
-| **Reutilização** | Acoplada a FastAPI | Agnóstica (Hono adapter) |
+| Aspecto                | Python (Agno)             | TypeScript (Vercel AI SDK)    |
+| ---------------------- | ------------------------- | ----------------------------- |
+| **Framework**          | Agno (framework-specific) | Vercel AI SDK (agnóstico)     |
+| **Type Safety**        | Dinâmico                  | Type-safe (TypeScript)        |
+| **Multi-tenant**       | Manual                    | Nativo                        |
+| **Provedores**         | Principalmente OpenAI     | 25+ provedores suportados     |
+| **Observabilidade**    | Manual                    | DevTools built-in             |
+| **Tool Calling**       | Via Agno                  | Via Vercel AI (standardizado) |
+| **Message Management** | Customizado               | Estruturado (AI SDK)          |
+| **Escalabilidade**     | Manual                    | Preparado para K8s            |
+| **Reutilização**       | Acoplada a FastAPI        | Agnóstica (Hono adapter)      |
 
 ---
 
 ## 📚 Referências
 
 ### Documentação Oficial
+
 - [Vercel AI SDK Docs](https://ai-sdk.dev/docs)
 - [Hono Docs](https://hono.dev/)
 - [Bun Runtime](https://bun.sh/)
@@ -930,6 +983,7 @@ app.post("/:tenantId/webhook", async (c) => {
 - [Zod Validation](https://zod.dev/)
 
 ### Tecnologias Complementares
+
 - BullMQ: Job queuing
 - Redis: Caching & sessions
 - PostgreSQL: Data persistence

@@ -23,7 +23,8 @@ services:
     depends_on:
       - api
     volumes:
-      - ./apps/ai/src:/tickzap/apps/ai/src
+      - ./apps/ai:/tickzap/apps/ai
+      - ai_node_modules:/tickzap/node_modules
     ports:
       - "3003:3003"
 
@@ -71,6 +72,7 @@ volumes:
   db_data:
   minio_data:
     name: tickzap_minio_data
+  ai_node_modules:
 
 networks:
   default:

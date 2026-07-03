@@ -25,6 +25,7 @@
 ## 🎯 O Que Mudou
 
 ### Antes (Python + Agno)
+
 ```
 FastAPI → Agno Framework → OpenAI API
 ❌ Framework-specific (Agno)
@@ -34,6 +35,7 @@ FastAPI → Agno Framework → OpenAI API
 ```
 
 ### Depois (TypeScript + Vercel AI SDK)
+
 ```
 Hono → Vercel AI SDK → 25+ Provedores
 ✅ Framework agnóstico
@@ -123,6 +125,7 @@ tickzap-ai-sdk/
 ## 🔧 Padrões Principais
 
 ### 1. Inicializar Modelo Dinamicamente
+
 ```typescript
 const model = await initializeModel({
   provider: config.provider, // openai | anthropic | ollama
@@ -132,11 +135,12 @@ const model = await initializeModel({
 ```
 
 ### 2. Executar Agent com Tools
+
 ```typescript
 const response = await generateText({
   model,
   prompt: ticket,
-  tools: { 
+  tools: {
     categorize: tool(...),
     routing: tool(...),
   }
@@ -144,17 +148,21 @@ const response = await generateText({
 ```
 
 ### 3. Definir Tool com Zod
+
 ```typescript
 const myTool = tool({
   description: "O que faz",
   parameters: z.object({
     input: z.string(),
   }),
-  execute: async (args) => { /* lógica */ }
+  execute: async (args) => {
+    /* lógica */
+  },
 });
 ```
 
 ### 4. Multi-tenant Isolation
+
 ```typescript
 async getModel(tenantId) {
   const config = await getTenantConfig(tenantId);
@@ -177,12 +185,12 @@ async getModel(tenantId) {
 
 ## 🚀 Roadmap Rápido
 
-| Sprint | Duração | Entregas |
-|--------|---------|----------|
-| 1 | 2 sem | MVP + 1 provedor (OpenAI) |
-| 2 | 2 sem | Multi-provider + multi-tenant |
-| 3 | 2 sem | RAG com pgvector |
-| 4 | 2 sem | Production-ready (K8s) |
+| Sprint | Duração | Entregas                      |
+| ------ | ------- | ----------------------------- |
+| 1      | 2 sem   | MVP + 1 provedor (OpenAI)     |
+| 2      | 2 sem   | Multi-provider + multi-tenant |
+| 3      | 2 sem   | RAG com pgvector              |
+| 4      | 2 sem   | Production-ready (K8s)        |
 
 **Total**: 8 semanas para production
 
@@ -191,6 +199,7 @@ async getModel(tenantId) {
 ## 🔗 Links Importantes
 
 ### Documentação
+
 - [Vercel AI SDK Docs](https://ai-sdk.dev/docs)
 - [Hono Docs](https://hono.dev/)
 - [Bun Runtime](https://bun.sh/)
@@ -198,10 +207,12 @@ async getModel(tenantId) {
 - [Zod Docs](https://zod.dev/)
 
 ### Exemplos
+
 - [Vercel AI Examples](https://github.com/vercel/ai/tree/main/examples)
 - [Tool Calling Example](https://ai-sdk.dev/docs/tools/tool-calling)
 
 ### Ferramentas Complementares
+
 - **Job Queue**: BullMQ (async processing)
 - **Tracing**: OpenTelemetry
 - **Logging**: Winston ou Pino
@@ -212,21 +223,24 @@ async getModel(tenantId) {
 ## 💡 Principais Decisões
 
 ### Por que Vercel AI SDK?
+
 ✅ Agnóstico (25+ provedores)  
 ✅ Tool calling built-in  
 ✅ DevTools para observabilidade  
 ✅ Type-safe com TypeScript  
-✅ Comunidade grande  
+✅ Comunidade grande
 
 ### Por que Bun?
+
 ✅ 3-10x mais rápido que Node  
 ✅ Native TypeScript support  
-✅ Melhor para microserviços  
+✅ Melhor para microserviços
 
 ### Por que pgvector + PostgreSQL?
+
 ✅ Sem infraestrutura extra  
 ✅ SQL puro para performance  
-✅ Já existe no projeto  
+✅ Já existe no projeto
 
 ---
 
