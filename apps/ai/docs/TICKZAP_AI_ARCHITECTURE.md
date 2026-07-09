@@ -98,7 +98,8 @@ Stack moderno, agnóstico e escalável:
 │   └─ @ai-sdk/mistral (Mistral)               │
 ├──────────────────────────────────────────────┤
 │   Data Persistence & Observability           │
-│   ├─ PostgreSQL + pgvector                   │
+│   ├─ PostgreSQL (banco: tickzap_ai)          │
+│   ├─ pgvector (no banco tickzap_ai)          │
 │   ├─ Redis (Cache & Sessions)                │
 │   ├─ Vercel AI DevTools                      │
 │   └─ Audit Logs (LGPD)                       │
@@ -163,8 +164,8 @@ Ferramentas específicas do negócio
 
 Persistência, cache e auditoria
 
-- **PostgreSQL**: Chat history, patterns, metrics
-- **pgvector**: Embeddings para RAG
+- **PostgreSQL** (`tickzap_ai`): banco dedicado ao serviço AI — chat history, patterns, metrics. Isolado do banco da API (`tickzap`).
+- **pgvector**: extensão instalada no banco `tickzap_ai` para embeddings RAG
 - **Redis**: Cache de sessões ativas
 - **Audit Logs**: Compliance LGPD
 

@@ -10,8 +10,9 @@ O serviço `tickzap-ai` funcionará como um agente de IA _stateless_ e _multi-te
 - **AI Providers:**
   - **Local:** [Ollama](https://ollama.com/) ou [vLLM](https://github.com/vllm-project/vllm).
   - **Nuvem:** OpenAI (`@ai-sdk/openai`), Anthropic (`@ai-sdk/anthropic`), Google Gemini (`@ai-sdk/google`).
-- **Banco Vetorial:** PostgreSQL com a extensão [pgvector](https://github.com/pgvector/pgvector) (reaproveitando o banco existente).
-- **ORM:** [Prisma](https://www.prisma.io/) ou SQL puro (usando `pg` para máxima performance de buscas vetoriais).
+- **Banco de Dados:** PostgreSQL — banco dedicado `tickzap_ai` (isolado do banco da API).
+- **Banco Vetorial:** PostgreSQL com a extensão [pgvector](https://github.com/pgvector/pgvector) no mesmo banco `tickzap_ai`.
+- **ORM:** [Drizzle ORM](https://orm.drizzle.team/) com `drizzle-orm/bun-sql`.
 
 ## 🔒 Privacidade e Conformidade (LGPD)
 
@@ -19,19 +20,6 @@ O serviço `tickzap-ai` funcionará como um agente de IA _stateless_ e _multi-te
 2. **Mitigação de Envio de Dados para Nuvem:**
    - **Com Modelos Locais:** Nenhum dado sai da infraestrutura do TickZap.
    - **Com Modelos Cloud:** A sanitização na camada local do `DataSanitizer` torna-se **crítica e obrigatória**, garantindo que apenas dados de negócios anonimizados sejam transmitidos para APIs de terceiros (como OpenAI ou Anthropic).
-
----
-
-## 🛠️ Stack Tecnológica Recomendada
-
-- **Runtime:** [Bun](https://bun.sh/) (ultra-rápido, suporte nativo a TypeScript).
-- **Framework Web:** [Hono](https://hono.dev/) (leve, ótimo suporte para Bun).
-- **Framework de IA:** [Vercel AI SDK](https://sdk.vercel.ai/) (suporta de forma agnóstica a troca dinâmica de provedores).
-- **AI Providers:**
-  - **Local:** [Ollama](https://ollama.com/) ou [vLLM](https://github.com/vllm-project/vllm).
-  - **Nuvem:** OpenAI (`@ai-sdk/openai`), Anthropic (`@ai-sdk/anthropic`), Google Gemini (`@ai-sdk/google`).
-- **Banco Vetorial:** PostgreSQL com a extensão [pgvector](https://github.com/pgvector/pgvector) (reaproveitando o banco existente).
-- **ORM:** [Prisma](https://www.prisma.io/) ou SQL puro (usando `pg` para máxima performance de buscas vetoriais).
 
 ## 🔍 Plano de Verificação e Testes
 
@@ -45,6 +33,11 @@ O serviço `tickzap-ai` funcionará como um agente de IA _stateless_ e _multi-te
 - Configurar o Tenant "A" com modelo local Ollama e o Tenant "B" com uma chave da OpenAI.
 - Enviar requisições de teste e verificar nos logs que o Tenant A realiza inferência na rede interna e o Tenant B executa a chamada na nuvem de forma transparente.
 
+Prettier:
+```sh
+bunx prettier . --check
+```
+
 To install dependencies:
 
 ```sh
@@ -57,4 +50,4 @@ To run:
 bun run dev
 ```
 
-open http://localhost:3000
+open http://localhost:3003
