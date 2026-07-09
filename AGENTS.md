@@ -16,7 +16,9 @@ Use sempre que você estiver em **modo de planejamento** ou **modo de analise**
 
 ## Infra e execução do projeto
 
-o projeto roda 100% dentro de containers Docker **Nunca** execute comandos no host.
+O projeto roda dentro de containers Docker. Comandos de runtime/tooling do projeto (ex.: `bun`, testes, migrations,
+dev server) devem rodar nos containers; leitura, busca, análise e edição de arquivos podem seguir pelo host.
+
 Visão geral:
 
 @./.ai/INFRA.md
