@@ -1,17 +1,21 @@
-FROM oven/bun:1.3
+# -------- stage deps --------
+FROM oven/bun:1.3 AS deps
 
-WORKDIR /tickzap
+WORKDIR /apps/api
 
-# copy manifests
 COPY package.json bun.lock* ./
-COPY apps/api/package.json apps/api/
 
-# install deps
-RUN bun install --filter api --verbose
+RUN bun install
 
-# copy api
-COPY apps/api apps/api
+# -------- stage dev (with hot reload) --------
+FROM oven/bun:1.3 as dev
+
+WORKDIR /apps/api
+
+COPY --from=deps /apps/api/node_modules ./node_modules
+
+COPY . .
 
 EXPOSE 3000
 
-CMD ["bun", "run", "dev:api"]
+CMD ["bun", "run", "dev"]
