@@ -24,18 +24,14 @@ apps/ai/
 
 ---
 
-## Passo 1 — Criar o banco `tickzap_ai`
+## Passo 1 — Banco `tickzap_ai`
 
-O serviço AI usa um banco dedicado, isolado do banco da API (`tickzap`). Crie o banco no container PostgreSQL:
+O serviço AI usa um banco dedicado, isolado do banco da API (`tickzap`). O banco é criado **automaticamente** pelo script `docker/init-db.sh` na primeira vez que o container sobe.
 
-```bash
-docker exec -it database psql -U user -c "CREATE DATABASE tickzap_ai;"
-```
-
-Confirme que foi criado:
+Para verificar:
 
 ```bash
-docker exec -it database psql -U user -c "\l"
+docker exec -it tickzap-database-1 psql -U user -d tickzap -c "\l"
 # Deve listar: tickzap e tickzap_ai
 ```
 
