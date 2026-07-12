@@ -2,9 +2,8 @@ import { SQL } from "bun";
 import { drizzle } from "drizzle-orm/bun-sql";
 
 // Workaround: Bun 1.3 interpreta o path da URL como Unix socket (oven-sh/bun#27713).
-// Parseia a URL manualmente e remove DATABASE_URL pra evitar override automático.
+// Parseia a URL manualmente e passa as opções explicitamente para o client.
 const dbUrl = new URL(process.env.DATABASE_URL!);
-delete process.env.DATABASE_URL;
 
 const client = new SQL({
   hostname: dbUrl.hostname,

@@ -8,7 +8,17 @@ import {
 } from "./user.errors";
 import type { CreateUser, UpdateUser, UserQuery } from "./user.schema";
 
-type User = typeof user.$inferSelect;
+type User = Omit<typeof user.$inferSelect, "password">;
+
+const userColumns = {
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  avatar: user.avatar,
+  isActive: user.isActive,
+  createdAt: user.createdAt,
+  updatedAt: user.updatedAt,
+};
 
 async function existsByEmail(email: string): Promise<boolean> {
   const [found] = await db
@@ -20,7 +30,11 @@ async function existsByEmail(email: string): Promise<boolean> {
 }
 
 export async function getById(id: string): Promise<User> {
-  const [found] = await db.select().from(user).where(eq(user.id, id)).limit(1);
+  const [found] = await db
+    .select(userColumns)
+    .from(user)
+    .where(eq(user.id, id))
+    .limit(1);
 
   if (!found) {
     throw new UserNotFoundError();
@@ -43,7 +57,7 @@ export async function list(query: UserQuery): Promise<User[]> {
   }
 
   return db
-    .select()
+    .select(userColumns)
     .from(user)
     .where(conditions.length ? and(...conditions) : undefined);
 }
@@ -61,7 +75,7 @@ export async function create(data: CreateUser): Promise<User> {
   const [created] = await db
     .insert(user)
     .values({ name: data.name, email: data.email, password })
-    .returning();
+    .returning(userColumns);
   return created;
 }
 
@@ -80,7 +94,7 @@ export async function update(id: string, data: UpdateUser): Promise<User> {
     .update(user)
     .set(data)
     .where(eq(user.id, id))
-    .returning();
+    .returning(userColumns);
   return updated;
 }
 
@@ -91,7 +105,10 @@ export async function remove(id: string): Promise<User> {
     throw new CannotDeleteActiveUserError();
   }
 
-  const [deleted] = await db.delete(user).where(eq(user.id, id)).returning();
+  const [deleted] = await db
+    .delete(user)
+    .where(eq(user.id, id))
+    .returning(userColumns);
   return deleted;
 }
 
@@ -102,6 +119,6 @@ export async function toggleActive(id: string): Promise<User> {
     .update(user)
     .set({ isActive: !found.isActive })
     .where(eq(user.id, id))
-    .returning();
+    .returning(userColumns);
   return updated;
 }

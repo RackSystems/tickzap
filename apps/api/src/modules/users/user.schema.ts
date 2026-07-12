@@ -1,8 +1,8 @@
 import * as z from "zod";
 
 const userBaseSchema = z.object({
-  name: z.string().min(1).max(255),
-  email: z.email(),
+  name: z.string().trim().min(1).max(255),
+  email: z.string().trim().toLowerCase().email(),
 });
 
 export const createUserSchema = userBaseSchema
@@ -22,8 +22,8 @@ export const userIdParamSchema = z.object({
 });
 
 export const userQuerySchema = z.object({
-  name: z.string().optional(),
-  email: z.string().optional(),
+  name: z.string().trim().optional(),
+  email: z.string().trim().toLowerCase().optional(),
   isActive: z.stringbool().optional(),
 });
 

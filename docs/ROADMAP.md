@@ -27,7 +27,7 @@ Já existe e funciona:
 - Modelos: `User`, `Channel`, `Contact`, `Ticket` (PENDING/OPEN/CLOSED, toggle de IA), `Message`, `Agent`.
 - Auth (login/logout/me), CRUD de canais, contatos, tickets, mensagens e agentes.
 - Chat de atendimento, dashboard básico e cadastro de agentes de IA no front.
-- IA em repositório separado ([tickzap-ai](https://github.com/RackSystems/tickzap-ai)).
+- IA sendo incorporada como domínio interno da API, conforme [AI_ARCHITECTURE.md](AI_ARCHITECTURE.md).
 
 Lacunas estruturais conhecidas:
 
@@ -66,7 +66,7 @@ a partir dos próprios dados da operação. O modelo não muda; o contexto é qu
 - [ ] **Briefing de contexto**: na abertura/atribuição, a IA monta a memória do cliente — tickets anteriores, o que já foi tentado, recorrência ("3º chamado do mês, mesmo sintoma") — e sugere o próximo passo ao atendente.
 - [ ] **Resposta sugerida**: rascunho baseado no histórico do cliente e em como casos parecidos foram resolvidos; o atendente edita e envia.
 - [ ] **Sugestão de atribuição**: baseada em categoria, carga e histórico do funcionário.
-- [ ] Definir contrato de integração com o `tickzap-ai` para esses casos de uso.
+- [ ] Implementar contratos internos de IA para esses casos de uso.
 
 ## Fase 3 — Base de conhecimento e auto-resposta
 
@@ -107,4 +107,3 @@ A base é alimentada pela entrevista de onboarding e pelo aprendizado contínuo,
 |---|---|
 | Evolution API vs WhatsApp Cloud API oficial | Evolution (não oficial) tem risco de banimento de número; a oficial tem custo por conversa e exige aprovação Meta. Suportar ambas via abstração de `Channel`? |
 | Modelo de cobrança | Por atendente? Por ticket? Por número conectado? Impacta o modelo de dados de tenant. |
-| Escopo do `tickzap-ai` | O que roda no repo de IA vs o que é chamada direta de LLM na API principal. |
