@@ -10,11 +10,9 @@ bun run dev
 
 Migrations
 ```
-  bun run db:generate -- --name=initial_schema
-
-  bun run db:check
-
-  bun run db:migrate
+bunx drizzle-kit generate --name=initial_schema
+bunx drizzle-kit check
+bunx drizzle-kit migrate
 
 ```
 
