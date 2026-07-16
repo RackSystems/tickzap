@@ -8,6 +8,6 @@ export const ticket = pgTable("ticket", {
   description: text("description").notNull(),
   status: text("status").notNull(),
   tags: jsonb("tags"),
-  requesterId: text("requester_id").notNull().references(() => requester.id),
+  requesterId: uuid("requester_id").notNull().references(() => requester.id),
   ...timestamps,
 });

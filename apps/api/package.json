@@ -3,7 +3,10 @@
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "format": "prettier --write src",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:check": "drizzle-kit check"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.11",
