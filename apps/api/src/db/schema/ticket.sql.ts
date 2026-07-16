@@ -1,6 +1,6 @@
 import { pgTable, text, uuid, jsonb } from "drizzle-orm/pg-core";
 import {timestamps} from "@/db/columns.helpers";
-import { requester } from "@/db/schema";
+import { requester } from "./requester.sql";
 
 export const ticket = pgTable("ticket", {
   id: uuid("id").primaryKey().defaultRandom(),
