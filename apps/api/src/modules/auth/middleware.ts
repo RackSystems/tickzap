@@ -13,16 +13,14 @@ export type AuthEnv = {
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
-export function getTrustedOrigins(): string[] {
-  return (
-    process.env.TRUSTED_ORIGINS ??
-    process.env.CORS_ORIGIN ??
-    "http://localhost:5173"
-  )
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean);
-}
+export const trustedOrigins = (
+  process.env.TRUSTED_ORIGINS ??
+  process.env.CORS_ORIGIN ??
+  "http://localhost:5173"
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 export const requireTrustedOrigin = createMiddleware(async (c, next) => {
   if (SAFE_METHODS.has(c.req.method)) {
@@ -32,7 +30,7 @@ export const requireTrustedOrigin = createMiddleware(async (c, next) => {
 
   const origin = c.req.header("origin");
 
-  if (origin && !getTrustedOrigins().includes(origin)) {
+  if (origin && !trustedOrigins.includes(origin)) {
     throw new UntrustedOriginError();
   }
 

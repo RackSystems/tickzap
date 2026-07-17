@@ -5,7 +5,7 @@ import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { DomainError } from "@/shared/errors";
 import authRouter from "@/modules/auth/routes";
 import {
-  getTrustedOrigins,
+  trustedOrigins,
   requireTrustedOrigin,
 } from "@/modules/auth/middleware";
 import userRouter from "@/modules/users/routes";
@@ -15,7 +15,7 @@ const app = new Hono();
 app.use(
   "*",
   cors({
-    origin: getTrustedOrigins(),
+    origin: trustedOrigins,
     credentials: true,
   }),
 );

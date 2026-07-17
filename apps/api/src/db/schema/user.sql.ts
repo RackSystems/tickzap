@@ -1,5 +1,6 @@
 import { pgTable, text, boolean, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { timestamps } from "../columns.helpers";
+import { tenant } from "./tenant.sql";
 
 export const user = pgTable(
   "users",
@@ -10,6 +11,9 @@ export const user = pgTable(
     email: text().notNull(),
     avatar: text(),
     isActive: boolean("is_active").default(true).notNull(),
+    tenantId: uuid("tenant_id").references(() => tenant.id, {
+      onDelete: "cascade",
+    }),
     ...timestamps,
   },
   (table) => [
