@@ -19,7 +19,7 @@ export const ticketQuerySchema = z.object({
   tags: z.string().optional(),
   title: z.string().optional(),
   description: z.string().optional(),
-  requesterId: z.uuid(),
+  requesterId: z.uuid().optional(),
 });
 
 export type CreateTicket = z.infer<typeof ticketSchema>;

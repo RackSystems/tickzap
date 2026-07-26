@@ -10,6 +10,7 @@ import {
 } from "@/modules/auth/middleware";
 import userRouter from "@/modules/users/routes";
 import ticketRouter from "@/modules/tickets/routes";
+import requesterRouter from "@/modules/requesters/routes";
 
 const app = new Hono();
 
@@ -46,5 +47,6 @@ app.get("/", (c) => {
 app.route("/auth", authRouter);
 app.route("/users", userRouter);
 app.route("/tickets", ticketRouter);
+app.route("/requesters", requesterRouter);
 
 export default app;
