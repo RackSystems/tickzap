@@ -16,4 +16,9 @@ bunx drizzle-kit migrate
 
 ```
 
+Seed
+```
+bun --env-file=/apps/api/.env run /apps/api/src/db/seed.ts
+```
+
 open http://localhost:3000

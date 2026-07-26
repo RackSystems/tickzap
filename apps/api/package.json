@@ -13,6 +13,7 @@
     "@hono/zod-validator": "^0.8.0",
     "ai": "^7.0.14",
     "drizzle-orm": "^1.0.0-rc.4",
+    "drizzle-seed": "1.0.0-rc.4-5d5b77c",
     "hono": "^4.12.27",
     "zod": "^4.4.3"
   },
