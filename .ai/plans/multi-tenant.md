@@ -18,20 +18,53 @@ Regra de negócio confirmada: tenant é o limite de isolamento de tudo. Um
 daquele tenant que abriu contato; `ticket` liga os dois. Nenhum dado pode
 vazar entre tenants — nem leitura, nem escrita.
 
-Decisões já validadas com o parceiro humano:
-- Tenant é resolvido via sessão (`user.tenantId`), não por header/subdomínio.
+Decisões já validadas com o parceiro humano na primeira rodada de alinhamento:
+- Cada usuário pertence a exatamente um tenant.
+- O email do usuário permanece único globalmente.
+- O tenant da requisição será derivado do usuário autenticado. Foi proposta a
+  criação de um middleware de tenant, aplicado após o middleware de
+  autenticação. Ele extrai `tenantId` do usuário autenticado, carrega o tenant,
+  valida sua existência e disponibiliza esse contexto para as ações seguintes.
+  O middleware estabelece o escopo confiável, mas os services continuam
+  responsáveis por aplicar explicitamente `tenantId` em inserts, updates,
+  deletes e filtros das consultas Drizzle.
+- O seed segue o padrão atual: cria o tenant e usa o id criado em
+  `user.tenantId`.
+- Como a execução será manual e somente em desenvolvimento, usuários existentes
+  com `tenantId = null` serão migrados para o tenant criado, em vez de serem
+  descartados por um reset do banco.
+- No fluxo normal, um usuário novo é criado dentro do tenant do usuário
+  autenticado que realizou o cadastro.
+- A possibilidade futura de um administrador criar outros tenants e vincular
+  usuários ao tenant desejado depende de roles e permissions e não faz parte
+  desta etapa.
+- A implementação será incremental:
+  1. mínimo necessário para seed, backfill e vínculo obrigatório do tenant com
+     todas as tabelas existentes, incluindo os ajustes de escrita necessários
+     para a API continuar funcional;
+  2. isolamento de todas as consultas por tenant;
+  3. integração final com autenticação, roles e permissions.
 - `requester` e `ticket` ganham coluna `tenantId` direta (não só herdada via
   join) — toda leitura já precisa filtrar por tenant mesmo assim, e a coluna
   direta deixa a invariante explícita e evita joins obrigatórios.
 - Provisionamento de tenant: só via seed/admin manual por enquanto.
-- Banco de dev pode ser resetado (sem dado real a preservar).
 - `modules/users` entra no mesmo escopo (também estava vazando entre tenants).
 - Integridade cross-tenant `ticket.requesterId` → `requester`: validação na
   aplicação (não constraint composta no banco).
 - Unicidade de email do `user`: continua **global**, não vira composta com
   tenant (login continua só por email, sem seleção de tenant).
+- `session` também armazena diretamente o `tenantId` do usuário autenticado.
+- A introdução das colunas obrigatórias será feita em duas migrations, com o
+  seed/backfill executado entre elas.
+- O tenant terá `name`, `documentType` e `documentNumber` como campos separados.
+  Além do `id`, o par `(name, documentNumber)` será um identificador de negócio
+  com constraint única composta.
 - Novas FKs `ticket.tenantId`/`requester.tenantId`: `onDelete: "cascade"`,
   espelhando `user.tenantId`.
+- A cascata do tenant é unidirecional: excluir um tenant remove todos os seus
+  usuários, sessões, requesters e tickets. Excluir uma entidade filha nunca
+  remove o tenant nem outras entidades irmãs. A sessão continua sendo
+  dependente do usuário e é removida quando o usuário é excluído.
 
 ## Fluxo de escopo (estado alvo)
 
@@ -41,7 +74,9 @@ Request
   → requireTrustedOrigin
   → requireAuth                    (valida cookie, carrega user + session)
        user agora sempre tem tenantId (NOT NULL)
-  → handler lê c.var.user.tenantId (sem variável de contexto nova)
+  → requireTenant                  (carrega e valida o tenant da sessão)
+       define c.var.tenant
+  → handler lê c.var.tenant.id
   → service(tenantId, ...)
        insert → grava tenantId
        select → where tenantId = ctx.tenantId AND ...
@@ -52,49 +87,91 @@ Request
 
 ```
 tenant (1) ──< user            tenantId NOT NULL, cascade   [migrar: era nullable]
+tenant (1) ──< session         tenantId NOT NULL             [novo]
 tenant (1) ──< requester        tenantId NOT NULL, cascade   [novo]
 tenant (1) ──< ticket           tenantId NOT NULL, cascade   [novo]
 requester (1) ──< ticket        requesterId (já existe; validado por app, não FK composta)
 ```
 
+Regras de exclusão:
+
+```
+DELETE tenant
+  ├─> DELETE users
+  │     └─> DELETE sessions do usuário
+  ├─> DELETE sessions do tenant
+  ├─> DELETE requesters
+  └─> DELETE tickets
+
+DELETE user      ──> não altera tenant, requesters ou tickets
+DELETE requester ──> não altera tenant, users ou demais requesters
+DELETE ticket    ──> não altera tenant, user ou requester
+```
+
 ## Fases
 
-### Fase 0 — Reset do banco de dev
-`user.tenantId` vai virar `NOT NULL`; o seed atual força `tenantId: null` na
-linha existente, então a migration quebraria contra dado órfão. Resetar antes
-evita backfill descartável:
-- `docker compose down -v` (derruba o volume) e sobe de novo — mais simples
-  e já é o padrão de "posso resetar" combinado.
+### Fase 0 — Primeira migration: preparar o backfill
+`user.tenantId` vai virar `NOT NULL`; o seed atual força `tenantId: null`, e
+`session`, `requester` e `ticket` ainda não possuem essa coluna. A primeira
+migration deve:
+- manter `users.tenant_id` nullable;
+- adicionar `sessions.tenant_id`, `requester.tenant_id` e `ticket.tenant_id`
+  como nullables, com suas respectivas FKs;
+- permitir que a aplicação execute o seed/backfill antes de impor `NOT NULL`.
+
+Como esta operação será executada manualmente e somente em desenvolvimento:
+- criar ou localizar o tenant que receberá os usuários existentes;
+- atualizar todos os usuários com `tenantId = null` para esse tenant;
+- atualizar todas as sessões, requesters e tickets existentes para o mesmo
+  tenant;
+- somente depois tornar os quatro vínculos obrigatórios.
+
+O banco não deve ser resetado como parte deste roteiro.
 
 ### Fase 1 — Schema
 - `src/db/schema/user.sql.ts`: `tenantId` passa a `.notNull()` (mantém FK
   `cascade` já existente). Índice `user_email_key` **sem mudança** (fica
   global).
+- `src/db/schema/session.sql.ts`: adicionar `tenantId` obrigatório, preenchido
+  com o tenant do usuário no momento da criação da sessão.
 - `src/db/schema/ticket.sql.ts`: adicionar `tenantId: uuid("tenant_id").notNull().references(() => tenant.id, { onDelete: "cascade" })`.
 - `src/db/schema/requester.sql.ts`: mesma adição de `tenantId`.
-- `src/db/schema/tenant.sql.ts` e `session.sql.ts`: sem mudança.
+- `src/db/schema/tenant.sql.ts`: adicionar `documentType` e `documentNumber` e
+  criar índice único composto por `(name, documentNumber)`. O `id` UUID
+  continua sendo a chave primária e o par também pode ser usado para localizar
+  o tenant.
 
-### Fase 2 — Migration
-- `bun run db:generate` (drizzle-kit generate) → novo diretório em `drizzle/`.
-- Revisar o SQL gerado (conferir `NOT NULL` + FK cascade nas 3 colunas).
-- `bun run db:check` e `bun run db:migrate`.
+### Fase 2 — Segunda migration: impor as invariantes
+- Após executar o seed/backfill, gerar a segunda migration para tornar
+  `users.tenant_id`, `sessions.tenant_id`, `requester.tenant_id` e
+  `ticket.tenant_id` obrigatórios.
+- Revisar o SQL gerado, conferindo `NOT NULL` e as FKs definidas.
+- Rodar `bun run db:check` e `bun run db:migrate` dentro do container.
 
 ### Fase 3 — Seed (`src/db/seed.ts`)
-- Nova env var obrigatória (ex.: `SEED_TENANT_NAME`).
-- Buscar/criar o tenant via `db.insert(tenant).values({ name }).returning()`
-  (idempotente por nome, mesmo padrão do check de usuário existente já
-  presente no arquivo).
+- Novas env vars obrigatórias: `SEED_TENANT_NAME`,
+  `SEED_TENANT_DOCUMENT_TYPE` e `SEED_TENANT_DOCUMENT_NUMBER`.
+- Normalizar `documentNumber` antes da busca e persistência.
+- Buscar o tenant pelo par `(name, documentNumber)`; se não existir, criá-lo
+  com `name`, `documentType` e `documentNumber`. A constraint única composta
+  sustenta a idempotência desse identificador de negócio.
+- Se o usuário já existir com `tenantId = null`, vinculá-lo ao tenant criado,
+  em vez de encerrar imediatamente como o seed atual.
+- Preencher com o tenant criado todos os registros existentes de `session`,
+  `requester` e `ticket` cujo `tenantId` ainda seja nulo.
 - Passar `tenant.id` para `f.default({ defaultValue: tenantId })` na coluna
   `tenantId` do `seed(db, { users: user }, ...)`, substituindo o
   `defaultValue: null` atual.
 
-### Fase 4 — Auth
+### Fase 4 — Auth e contexto mínimo de tenant
 - `src/modules/auth/auth.service.ts`: incluir `tenantId: user.tenantId` em
-  `sessionUserColumns`. Tipo `SessionUser` já inclui o campo automaticamente
-  assim que o schema for NOT NULL — só falta selecioná-lo em runtime.
-- `src/modules/auth/middleware.ts`: nenhuma variável de contexto nova; ler
-  `c.var.user.tenantId` diretamente nos handlers (evita duas fontes de
-  verdade). `AuthEnv` não muda de tipo.
+  `sessionUserColumns` e gravá-lo também na nova sessão.
+- `src/modules/auth/middleware.ts`: manter `requireAuth` responsável pela
+  autenticação e adicionar `requireTenant` depois dele para carregar e validar
+  o tenant indicado pela sessão/usuário.
+- Adicionar o tenant validado ao contexto Hono. Os handlers passam
+  `c.var.tenant.id` aos services; o valor enviado pelo cliente nunca define o
+  tenant da operação.
 
 ### Fase 5 — Errors
 - Novo `src/modules/tickets/ticket.errors.ts`: `TicketNotFoundError` (404).
@@ -132,18 +209,19 @@ mesmo estilo de `user.service.ts` (`update(id, data)` → agora
 
 ### Fase 7 — Routes
 - `src/modules/tickets/routes.ts` e `src/modules/requesters/routes.ts`:
-  adicionar `router.use("*", requireAuth)` (removendo o
-  `// router.use()` comentado em tickets) e passar
-  `c.var.user.tenantId` como primeiro argumento em toda chamada de service.
-- `src/modules/users/routes.ts`: já tem `requireAuth`; só passa a repassar
-  `tenantId` para o service em cada handler.
+  adicionar `router.use("*", requireAuth, requireTenant)` (removendo o
+  `// router.use()` comentado em tickets) e passar `c.var.tenant.id` como
+  primeiro argumento em toda chamada de service.
+- `src/modules/users/routes.ts`: manter `requireAuth`, adicionar
+  `requireTenant` e repassar `c.var.tenant.id` ao service em cada handler.
 
 ### Fase 8 — Verificação manual
 1. Reset + seed; login com o usuário seedado; confirmar cookie de sessão.
 2. Criar `requester` e `ticket` via API autenticada; confirmar em `list`.
-3. Rodar o seed uma segunda vez com env vars diferentes (segundo tenant/user);
-   logar como o segundo usuário; confirmar que `GET /tickets` e
-   `GET /requesters` **não** retornam dados do primeiro tenant.
+3. Rodar o seed uma segunda vez com nome, documento e usuário diferentes
+   (segundo tenant/user); logar como o segundo usuário; confirmar que
+   `GET /tickets` e `GET /requesters` **não** retornam dados do primeiro
+   tenant.
 4. Tentar criar um ticket apontando para `requesterId` de outro tenant →
    esperar 404 `RequesterNotFoundError`.
 5. Confirmar que `/users` também não vaza entre tenants (mesmo módulo passou
