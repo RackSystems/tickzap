@@ -1,6 +1,7 @@
 import { pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { timestamps } from "../columns.helpers";
 import { user } from "./user.sql";
+import {tenant} from "@/db/schema/tenant.sql";
 
 export const session = pgTable(
   "sessions",
@@ -13,6 +14,8 @@ export const session = pgTable(
     expiresAt: timestamp("expires_at").notNull(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
+    tenantId: uuid("tenant_id")
+      .references(() => tenant.id),
     ...timestamps,
   },
   (table) => [

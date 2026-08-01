@@ -1,16 +1,29 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { seed } from "drizzle-seed";
 import { db } from "./drizzle";
-import { user } from "./schema";
+import { tenant, user } from "./schema";
 
 async function main(): Promise<void> {
   const name = process.env.SEED_USER_NAME?.trim();
   const email = process.env.SEED_USER_EMAIL?.trim().toLowerCase();
   const plainPassword = process.env.SEED_USER_PASSWORD;
 
-  if (!name || !email || !plainPassword) {
+  const tenantName = process.env.SEED_TENANT_NAME?.trim();
+  const tenantDocumentType = process.env.SEED_TENANT_DOCUMENT_TYPE?.trim().toUpperCase();
+  const tenantDocumentNumber = process.env.SEED_TENANT_DOCUMENT_NUMBER?.replace(/\D/g, "");
+
+  if (
+    !name ||
+    !email ||
+    !plainPassword ||
+    !tenantName ||
+    !tenantDocumentType ||
+    !tenantDocumentNumber
+  ) {
     throw new Error(
-      "SEED_USER_NAME, SEED_USER_EMAIL and SEED_USER_PASSWORD are required",
+      "SEED_USER_NAME, SEED_USER_EMAIL, SEED_USER_PASSWORD, " +
+        "SEED_TENANT_NAME, SEED_TENANT_DOCUMENT_TYPE and " +
+        "SEED_TENANT_DOCUMENT_NUMBER are required",
     );
   }
 
@@ -20,14 +33,48 @@ async function main(): Promise<void> {
     );
   }
 
+  let [seedTenant] = await db
+    .select({ id: tenant.id })
+    .from(tenant)
+    .where(
+      and(
+        eq(tenant.name, tenantName),
+        eq(tenant.documentNumber, tenantDocumentNumber),
+      ),
+    )
+    .limit(1);
+
+  if (!seedTenant) {
+    [seedTenant] = await db
+      .insert(tenant)
+      .values({
+        name: tenantName,
+        documentType: tenantDocumentType,
+        documentNumber: tenantDocumentNumber,
+      })
+      .returning({ id: tenant.id });
+  }
+
+  if (!seedTenant) {
+    throw new Error("Failed to create seed tenant");
+  }
+
+  const tenantId = seedTenant.id;
+
   const [existingUser] = await db
-    .select({ id: user.id })
+    .select({ id: user.id, tenantId: user.tenantId })
     .from(user)
     .where(eq(user.email, email))
     .limit(1);
 
   if (existingUser) {
-    console.log(`Seed user already exists: ${email}`);
+    if (!existingUser.tenantId) {
+      await db
+        .update(user)
+        .set({ tenantId })
+        .where(eq(user.id, existingUser.id));
+    }
+    console.log(`Seed user already exists: ${email}, in tenant ${tenantName}`);
     return;
   }
 
@@ -45,7 +92,7 @@ async function main(): Promise<void> {
         password: f.default({ defaultValue: password }),
         avatar: f.default({ defaultValue: null }),
         isActive: f.default({ defaultValue: true }),
-        tenantId: f.default({ defaultValue: null }),
+        tenantId: f.default({ defaultValue: tenantId }),
       },
     },
   }));
