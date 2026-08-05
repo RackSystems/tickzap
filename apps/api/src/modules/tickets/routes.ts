@@ -3,11 +3,11 @@ import {zValidator} from "@hono/zod-validator";
 import {z} from "zod";
 import {ticketQuerySchema, ticketSchema} from "@/modules/tickets/ticket.schema";
 import * as TicketService from "@/modules/tickets/ticket.service";
-import {AuthEnv} from "@/modules/auth/middleware";
+import {AuthEnv, requireAuth} from "@/modules/auth/middleware";
 
 const router = new Hono<AuthEnv>();
 
-// router.use()
+router.use("*", requireAuth);
 
 router.get("/",  zValidator("query", ticketQuerySchema), async (c) => {
   return c.json(await TicketService.list(c.req.valid("query")));
