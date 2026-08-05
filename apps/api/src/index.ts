@@ -11,6 +11,7 @@ import {
 import userRouter from "@/modules/users/routes";
 import ticketRouter from "@/modules/tickets/routes";
 import requesterRouter from "@/modules/requesters/routes";
+import tenantRouter from "@/modules/tenant/routes";
 
 const app = new Hono();
 
@@ -48,5 +49,6 @@ app.route("/auth", authRouter);
 app.route("/users", userRouter);
 app.route("/tickets", ticketRouter);
 app.route("/requesters", requesterRouter);
+app.route("/tenant", tenantRouter);
 
 export default app;
