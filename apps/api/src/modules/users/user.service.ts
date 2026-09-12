@@ -1,6 +1,6 @@
 import { and, eq, ilike, type SQL } from "drizzle-orm";
 import { db } from "@/db/drizzle";
-import { user } from "@/db/schema";
+import {session, user} from "@/db/schema";
 import {
   CannotDeleteActiveUserError,
   EmailAlreadyInUseError,
@@ -16,6 +16,7 @@ const userColumns = {
   email: user.email,
   avatar: user.avatar,
   isActive: user.isActive,
+  tenantId: user.tenantId,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt,
 };
@@ -24,7 +25,12 @@ async function existsByEmail(email: string): Promise<boolean> {
   const [found] = await db
     .select({ id: user.id })
     .from(user)
-    .where(eq(user.email, email))
+    .where(
+      and(
+        eq(user.email, email),
+        eq(user.tenantId, session.tenantId)
+      ),
+    )
     .limit(1);
   return found !== undefined;
 }
@@ -33,7 +39,12 @@ export async function getById(id: string): Promise<User> {
   const [found] = await db
     .select(userColumns)
     .from(user)
-    .where(eq(user.id, id))
+    .where(
+      and(
+        eq(user.id, id),
+        eq(user.tenantId, session.tenantId)
+      )
+    )
     .limit(1);
 
   if (!found) {
@@ -72,9 +83,16 @@ export async function create(data: CreateUser): Promise<User> {
     cost: 12,
   });
 
+  const tenantId = c.get("tenantId");
+
   const [created] = await db
     .insert(user)
-    .values({ name: data.name, email: data.email, password })
+    .values({
+      name: data.name,
+      email: data.email,
+      password: password,
+      tenantId: tenantId
+    })
     .returning(userColumns);
   return created;
 }

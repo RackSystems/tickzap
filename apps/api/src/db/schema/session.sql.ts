@@ -15,6 +15,7 @@ export const session = pgTable(
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
     tenantId: uuid("tenant_id")
+      .notNull()
       .references(() => tenant.id),
     ...timestamps,
   },

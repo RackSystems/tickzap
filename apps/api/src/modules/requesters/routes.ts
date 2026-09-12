@@ -4,10 +4,11 @@ import { z } from "zod";
 import {AuthEnv, requireAuth} from "@/modules/auth/middleware";
 import * as RequesterService from "@/modules/requesters/requester.service";
 import {requesterQuerySchema, requesterSchema} from "@/modules/requesters/requester.schema";
+import {requireTenant} from "@/modules/tenant/middleware";
 
 const router = new Hono<AuthEnv>();
 
-router.use("*", requireAuth);
+router.use("*", requireAuth, requireTenant);
 
 router.get("/", zValidator("query", requesterQuerySchema), async ( c) => {
   return c.json(await RequesterService.list(c.req.valid("query")));

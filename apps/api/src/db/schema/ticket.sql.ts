@@ -10,7 +10,7 @@ export const ticket = pgTable("ticket", {
   status: text("status").notNull(),
   tags: jsonb("tags"),
   requesterId: uuid("requester_id").notNull().references(() => requester.id),
-  tenantId: uuid("tenant_id")
+  tenantId: uuid("tenant_id").notNull()
     .references(() => tenant.id),
   ...timestamps,
 });

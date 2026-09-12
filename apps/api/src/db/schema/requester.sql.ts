@@ -10,7 +10,7 @@ export const requester = pgTable("requester", {
   companyName: text("company_name").notNull(),
   identifierValue: text("identifier_value").notNull(),
   identifierType: text("identifier_type").notNull(),
-  tenantId: uuid("tenant_id")
+  tenantId: uuid("tenant_id").notNull()
     .references(() => tenant.id),
   observations: jsonb(),
   ...timestamps,

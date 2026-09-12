@@ -1,6 +1,6 @@
 import { and, eq, gt } from "drizzle-orm";
 import { db } from "@/db/drizzle";
-import { session, user } from "@/db/schema";
+import {session, tenant, user} from "@/db/schema";
 import {
   InvalidCredentialsError,
   TooManySignInAttemptsError,
@@ -16,7 +16,7 @@ type StoredSession = typeof session.$inferSelect;
 
 export type Session = Pick<
   StoredSession,
-  "id" | "userId" | "expiresAt" | "createdAt" | "updatedAt"
+  "id" | "userId" | "tenantId" | "expiresAt" | "createdAt" | "updatedAt"
 >;
 export type SessionUser = Omit<typeof user.$inferSelect, "password">;
 
@@ -31,6 +31,7 @@ const sessionUserColumns = {
   email: user.email,
   avatar: user.avatar,
   isActive: user.isActive,
+  tenantId: user.tenantId,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt,
 };
@@ -38,6 +39,7 @@ const sessionUserColumns = {
 const sessionColumns = {
   id: session.id,
   userId: session.userId,
+  tenantId: session.tenantId,
   expiresAt: session.expiresAt,
   createdAt: session.createdAt,
   updatedAt: session.updatedAt,
@@ -120,6 +122,10 @@ export async function signIn(
 
   if (!isPasswordValid || !found.user.isActive) {
     throw new InvalidCredentialsError();
+  }
+
+  if (!found.user.tenantId) {
+    throw new InvalidCredentialsError(); // TODO
   }
 
   const token = generateToken();

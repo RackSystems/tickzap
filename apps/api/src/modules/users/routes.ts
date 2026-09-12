@@ -8,10 +8,11 @@ import {
   userIdParamSchema,
   userQuerySchema,
 } from "./user.schema";
+import {requireTenant} from "@/modules/tenant/middleware";
 
 const router = new Hono<AuthEnv>();
 
-router.use("*", requireAuth);
+router.use("*", requireAuth, requireTenant);
 
 router.get("/", zValidator("query", userQuerySchema), async (c) => {
   return c.json(await UserService.list(c.req.valid("query")));

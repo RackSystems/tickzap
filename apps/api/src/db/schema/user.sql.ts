@@ -11,7 +11,8 @@ export const user = pgTable(
     email: text().notNull(),
     avatar: text(),
     isActive: boolean("is_active").default(true).notNull(),
-    tenantId: uuid("tenant_id").references(() => tenant.id, {
+    tenantId: uuid("tenant_id").notNull()
+      .references(() => tenant.id, {
       onDelete: "cascade",
     }),
     ...timestamps,
