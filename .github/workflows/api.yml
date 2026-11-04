@@ -1,0 +1,37 @@
+name: API
+
+on:
+  push:
+    branches:
+      - main
+    paths: &paths
+      - 'apps/api/**'
+      - '.github/workflows/api.yml'
+  pull_request:
+    paths: *paths
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build API image
+        run: docker build --target dev --tag tickzap-api-lint apps/api
+
+      - name: Install dependencies and run lint
+        run: >-
+          docker run --rm tickzap-api-lint
+          sh -c 'bun install --frozen-lockfile && bun run lint'
