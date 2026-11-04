@@ -3,7 +3,8 @@
 .idea
 .vscode
 .editorconfig
-.env.example
+.env
+.env.*
 .gitattributes
 .gitignore
 
