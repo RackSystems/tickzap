@@ -7,20 +7,13 @@ const index = createRouter({
   routes,
 });
 
-index.beforeEach((to, from, next) => {
+index.beforeEach((to) => {
   document.title = 'Tickzap - ' + (to.meta.title ?? 'Home');
 
   const auth = useAuthStore();
 
-  if (to.meta.auth) {
-    if (!auth.isLoggedIn) next({ name: 'Login' });
-    else next();
-  } else if (to.meta.auth === false) {
-    if (auth.isLoggedIn) next({ name: 'Home' });
-    else next();
-  } else {
-    next();
-  }
+  if (to.meta.auth && !auth.isLoggedIn) return { name: 'Login' };
+  if (to.meta.auth === false && auth.isLoggedIn) return { name: 'Home' };
 });
 
 export default index;

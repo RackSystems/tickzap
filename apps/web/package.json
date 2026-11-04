@@ -5,33 +5,31 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "bun run --parallel type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.18",
-    "axios": "^1.13.3",
-    "daisyui": "^5.5.14",
-    "pinia": "^3.0.4",
+    "@vue/devtools-api": "^8.2.1",
+    "axios": "^1.21.0",
+    "pinia": "^4.1.0",
     "pinia-plugin-persistedstate": "^4.7.1",
-    "socket.io-client": "^4.8.3",
-    "tailwindcss": "^4.1.18",
     "vee-validate": "^4.15.1",
-    "vue": "^3.5.27",
-    "vue-router": "^4.6.4",
+    "vue": "^3.5.44",
+    "vue-router": "^5.4.0",
     "vue-toastification": "2.0.0-rc.5"
   },
   "devDependencies": {
-    "@tsconfig/node24": "^24.0.4",
-    "@types/node": "^25.0.10",
-    "@vitejs/plugin-vue": "^6.0.3",
-    "@vue/tsconfig": "^0.8.1",
-    "npm-run-all2": "^8.0.4",
-    "typescript": "~5.9.3",
-    "vite": "^7.3.1",
-    "vite-plugin-vue-devtools": "^8.0.5",
-    "vue-tsc": "^3.2.3"
+    "@tailwindcss/vite": "^4.3.4",
+    "@types/node": "^26.6.6",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "@vue/tsconfig": "^0.9.1",
+    "daisyui": "^5.7.50",
+    "tailwindcss": "^4.3.4",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5",
+    "vite-plugin-vue-devtools": "^8.2.1",
+    "vue-tsc": "^3.3.14"
   }
 }
