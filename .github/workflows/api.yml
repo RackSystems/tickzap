@@ -18,8 +18,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: Lint
+  checks:
+    name: Checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -29,9 +29,12 @@ jobs:
           persist-credentials: false
 
       - name: Build API image
-        run: docker build --target dev --tag tickzap-api-lint apps/api
+        id: build
+        run: docker build --target ci --tag tickzap-api-ci apps/api
 
-      - name: Install dependencies and run lint
-        run: >-
-          docker run --rm tickzap-api-lint
-          sh -c 'bun install --frozen-lockfile && bun run lint'
+      - name: Run lint
+        run: docker run --rm tickzap-api-ci bun run lint
+
+      - name: Check formatting
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: docker run --rm tickzap-api-ci bun run format:check
