@@ -2,4 +2,4 @@
 
 O projeto roda dentro de containers Docker. Comandos de runtime/tooling do projeto devem rodar nos containers.
 
-More infos: @./INFRA.md
+Mais detalhes em [docs/INFRA.md](./docs/INFRA.md).

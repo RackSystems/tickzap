@@ -1,24 +1,41 @@
-To install dependencies:
+# API do TickZap
+
+API executada com Bun, Hono, Drizzle ORM e PostgreSQL. Execute os comandos abaixo na raiz do repositório.
+
+## Desenvolvimento
+
+Copie `apps/api/.env.example` para `apps/api/.env`. Para conectar ao PostgreSQL do Compose, use `DATABASE_URL=postgresql://user:secret@database:5432/tickzap`.
+
 ```sh
-bun install
+docker compose up -d --build api
 ```
 
-To run:
+O container instala as dependências com o lockfile e inicia a API com hot reload em [localhost:3000](http://localhost:3000).
+
+## Validação e formatação
+
 ```sh
-bun run dev
+docker compose exec api bun run lint
+docker compose exec api bun run typecheck
+docker compose exec api bun run format
 ```
 
-Migrations
-```
-bunx drizzle-kit generate --name=initial_schema
-bunx drizzle-kit check
-bunx drizzle-kit migrate
+## Migrações
 
-```
+Gere migrações após alterar o schema, confira a consistência e aplique-as com o banco disponível.
 
-Seed
-```
-bun --env-file=/apps/api/.env run /apps/api/src/db/seed.ts
+```sh
+docker compose exec api bun run db:generate
+docker compose exec api bun run db:check
+docker compose exec api bun run db:migrate
 ```
 
-open http://localhost:3000
+## Dados iniciais
+
+Preencha as variáveis `SEED_*` em `apps/api/.env` e execute após aplicar as migrações.
+
+```sh
+docker compose exec api bun run src/db/seed.ts
+```
+
+Consulte também [a documentação de infraestrutura](../../docs/INFRA.md).
