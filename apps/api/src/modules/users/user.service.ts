@@ -1,6 +1,8 @@
-import { and, eq, ilike, type SQL } from "drizzle-orm";
+import { eq, ilike, type SQL } from "drizzle-orm";
 import { db } from "@/db/drizzle";
-import {session, user} from "@/db/schema";
+import { user } from "@/db/schema";
+import { revokeUserSessions } from "@/modules/auth/auth.service";
+import type { TenantScope } from "@/modules/tenant/tenant-scope";
 import {
   CannotDeleteActiveUserError,
   EmailAlreadyInUseError,
@@ -21,30 +23,22 @@ const userColumns = {
   updatedAt: user.updatedAt,
 };
 
+// O e-mail é único globalmente (entre tenants), então esta checagem
+// intencionalmente não usa o scope.
 async function existsByEmail(email: string): Promise<boolean> {
   const [found] = await db
     .select({ id: user.id })
     .from(user)
-    .where(
-      and(
-        eq(user.email, email),
-        eq(user.tenantId, session.tenantId)
-      ),
-    )
+    .where(eq(user.email, email))
     .limit(1);
   return found !== undefined;
 }
 
-export async function getById(id: string): Promise<User> {
+export async function getById(scope: TenantScope, id: string): Promise<User> {
   const [found] = await db
     .select(userColumns)
     .from(user)
-    .where(
-      and(
-        eq(user.id, id),
-        eq(user.tenantId, session.tenantId)
-      )
-    )
+    .where(scope.where(user, eq(user.id, id)))
     .limit(1);
 
   if (!found) {
@@ -54,7 +48,10 @@ export async function getById(id: string): Promise<User> {
   return found;
 }
 
-export async function list(query: UserQuery): Promise<User[]> {
+export async function list(
+  scope: TenantScope,
+  query: UserQuery,
+): Promise<User[]> {
   const conditions: SQL[] = [];
 
   if (query.name) {
@@ -70,10 +67,13 @@ export async function list(query: UserQuery): Promise<User[]> {
   return db
     .select(userColumns)
     .from(user)
-    .where(conditions.length ? and(...conditions) : undefined);
+    .where(scope.where(user, ...conditions));
 }
 
-export async function create(data: CreateUser): Promise<User> {
+export async function create(
+  scope: TenantScope,
+  data: CreateUser,
+): Promise<User> {
   if (await existsByEmail(data.email)) {
     throw new EmailAlreadyInUseError();
   }
@@ -83,22 +83,25 @@ export async function create(data: CreateUser): Promise<User> {
     cost: 12,
   });
 
-  const tenantId = c.get("tenantId");
-
   const [created] = await db
     .insert(user)
-    .values({
-      name: data.name,
-      email: data.email,
-      password: password,
-      tenantId: tenantId
-    })
+    .values(
+      scope.values({
+        name: data.name,
+        email: data.email,
+        password,
+      }),
+    )
     .returning(userColumns);
   return created;
 }
 
-export async function update(id: string, data: UpdateUser): Promise<User> {
-  const found = await getById(id);
+export async function update(
+  scope: TenantScope,
+  id: string,
+  data: UpdateUser,
+): Promise<User> {
+  const found = await getById(scope, id);
 
   if (
     data.email &&
@@ -111,13 +114,13 @@ export async function update(id: string, data: UpdateUser): Promise<User> {
   const [updated] = await db
     .update(user)
     .set(data)
-    .where(eq(user.id, id))
+    .where(scope.where(user, eq(user.id, id)))
     .returning(userColumns);
   return updated;
 }
 
-export async function remove(id: string): Promise<User> {
-  const found = await getById(id);
+export async function remove(scope: TenantScope, id: string): Promise<User> {
+  const found = await getById(scope, id);
 
   if (found.isActive) {
     throw new CannotDeleteActiveUserError();
@@ -125,18 +128,29 @@ export async function remove(id: string): Promise<User> {
 
   const [deleted] = await db
     .delete(user)
-    .where(eq(user.id, id))
+    .where(scope.where(user, eq(user.id, id)))
     .returning(userColumns);
   return deleted;
 }
 
-export async function toggleActive(id: string): Promise<User> {
-  const found = await getById(id);
+export async function toggleActive(
+  scope: TenantScope,
+  id: string,
+): Promise<User> {
+  const found = await getById(scope, id);
+  const isActive = !found.isActive;
 
-  const [updated] = await db
-    .update(user)
-    .set({ isActive: !found.isActive })
-    .where(eq(user.id, id))
-    .returning(userColumns);
-  return updated;
+  return db.transaction(async (tx) => {
+    const [updated] = await tx
+      .update(user)
+      .set({ isActive })
+      .where(scope.where(user, eq(user.id, id)))
+      .returning(userColumns);
+
+    if (!isActive) {
+      await revokeUserSessions(id, tx);
+    }
+
+    return updated;
+  });
 }

@@ -1,0 +1,147 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "ddc5c13c-b937-4b51-82a2-a1e28581c267",
+  "prevIds": [
+    "05534621-1dee-487c-9672-230ea0990b13"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "tenants",
+        "is_active"
+      ],
+      "writes": [
+        "s|col|public.tenants.is_active",
+        "n|col|public.tenants.is_active",
+        "e|col|public.tenants.is_active"
+      ],
+      "reads": [
+        "n|tbl|public.tenants",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "users",
+        "tenant_id"
+      ],
+      "writes": [
+        "s|colprop|public.users.tenant_id.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.users.tenant_id"
+      ],
+      "sqlHash": "f18eefed9939c874"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "requester",
+        "tenant_id"
+      ],
+      "writes": [
+        "s|colprop|public.requester.tenant_id.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.requester",
+        "n|sch|public",
+        "n|col|public.requester.tenant_id"
+      ],
+      "sqlHash": "dd354bf0752c4f60"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "sessions",
+        "tenant_id"
+      ],
+      "writes": [
+        "s|colprop|public.sessions.tenant_id.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.sessions",
+        "n|sch|public",
+        "n|col|public.sessions.tenant_id"
+      ],
+      "sqlHash": "2a5efda6469d0867"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "ticket",
+        "tenant_id"
+      ],
+      "writes": [
+        "s|colprop|public.ticket.tenant_id.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.ticket",
+        "n|sch|public",
+        "n|col|public.ticket.tenant_id"
+      ],
+      "sqlHash": "2317bd32cb7cd149"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tenants",
+        "name": "is_active",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"users\",\"tenant_id\"]",
+      "set": {
+        "notNull": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"requester\",\"tenant_id\"]",
+      "set": {
+        "notNull": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"sessions\",\"tenant_id\"]",
+      "set": {
+        "notNull": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"ticket\",\"tenant_id\"]",
+      "set": {
+        "notNull": true
+      }
+    }
+  ]
+}

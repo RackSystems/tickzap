@@ -1,8 +1,10 @@
-import { jsonb, pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { index, jsonb, pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { timestamps } from "@/db/columns.helpers";
 import {tenant} from "@/db/schema/tenant.sql";
 
-export const requester = pgTable("requester", {
+export const requester = pgTable(
+  "requester",
+  {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   contactValue: text("contact_value").notNull(),
@@ -14,4 +16,6 @@ export const requester = pgTable("requester", {
     .references(() => tenant.id),
   observations: jsonb(),
   ...timestamps,
-});
+  },
+  (table) => [index("requester_tenant_id_idx").on(table.tenantId)],
+);

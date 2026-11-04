@@ -1,0 +1,285 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "7df260ae-82d4-4c5f-b4f0-42e38bf5bd80",
+  "prevIds": [
+    "ddc5c13c-b937-4b51-82a2-a1e28581c267"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "requester",
+        "requester_tenant_id_idx"
+      ],
+      "writes": [
+        "s|idx|public.requester_tenant_id_idx",
+        "n|idx|public.requester_tenant_id_idx",
+        "e|idx|public.requester_tenant_id_idx",
+        "n|rel|public.requester_tenant_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.requester",
+        "n|sch|public",
+        "n|col|public.requester.tenant_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "sessions",
+        "session_tenant_id_idx"
+      ],
+      "writes": [
+        "s|idx|public.session_tenant_id_idx",
+        "n|idx|public.session_tenant_id_idx",
+        "e|idx|public.session_tenant_id_idx",
+        "n|rel|public.session_tenant_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.sessions",
+        "n|sch|public",
+        "n|col|public.sessions.tenant_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "tenants",
+        "tenant_document_number_name_idx"
+      ],
+      "writes": [
+        "s|idx|public.tenant_document_number_name_idx",
+        "n|idx|public.tenant_document_number_name_idx",
+        "e|idx|public.tenant_document_number_name_idx",
+        "n|rel|public.tenant_document_number_name_idx"
+      ],
+      "reads": [
+        "n|tbl|public.tenants",
+        "n|sch|public",
+        "n|col|public.tenants.document_number",
+        "n|col|public.tenants.name"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "tenants",
+        "tenant_is_active_idx"
+      ],
+      "writes": [
+        "s|idx|public.tenant_is_active_idx",
+        "n|idx|public.tenant_is_active_idx",
+        "e|idx|public.tenant_is_active_idx",
+        "n|rel|public.tenant_is_active_idx"
+      ],
+      "reads": [
+        "n|tbl|public.tenants",
+        "n|sch|public",
+        "n|col|public.tenants.is_active"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "ticket",
+        "ticket_tenant_id_idx"
+      ],
+      "writes": [
+        "s|idx|public.ticket_tenant_id_idx",
+        "n|idx|public.ticket_tenant_id_idx",
+        "e|idx|public.ticket_tenant_id_idx",
+        "n|rel|public.ticket_tenant_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.ticket",
+        "n|sch|public",
+        "n|col|public.ticket.tenant_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "users",
+        "user_tenant_id_idx"
+      ],
+      "writes": [
+        "s|idx|public.user_tenant_id_idx",
+        "n|idx|public.user_tenant_id_idx",
+        "e|idx|public.user_tenant_id_idx",
+        "n|rel|public.user_tenant_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.users.tenant_id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "requester",
+        "name": "requester_tenant_id_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "tenant_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "session_tenant_id_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "tenant_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tenants",
+        "name": "tenant_document_number_name_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "document_number",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "name",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tenants",
+        "name": "tenant_is_active_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "is_active",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ticket",
+        "name": "ticket_tenant_id_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "tenant_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "user_tenant_id_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "tenant_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    }
+  ]
+}

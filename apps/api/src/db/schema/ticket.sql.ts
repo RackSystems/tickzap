@@ -1,9 +1,11 @@
-import { pgTable, text, uuid, jsonb } from "drizzle-orm/pg-core";
+import { index, pgTable, text, uuid, jsonb } from "drizzle-orm/pg-core";
 import {timestamps} from "@/db/columns.helpers";
 import { requester } from "./requester.sql";
 import {tenant} from "@/db/schema/tenant.sql";
 
-export const ticket = pgTable("ticket", {
+export const ticket = pgTable(
+  "ticket",
+  {
   id: uuid("id").primaryKey().defaultRandom(),
   title: text("title").notNull(),
   description: text("description").notNull(),
@@ -13,4 +15,6 @@ export const ticket = pgTable("ticket", {
   tenantId: uuid("tenant_id").notNull()
     .references(() => tenant.id),
   ...timestamps,
-});
+  },
+  (table) => [index("ticket_tenant_id_idx").on(table.tenantId)],
+);

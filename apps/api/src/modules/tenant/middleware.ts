@@ -1,22 +1,17 @@
-import {createMiddleware} from "hono/factory";
-import {Session, SessionUser} from "@/modules/auth/auth.service";
-import {UnauthenticatedError} from "@/modules/auth/auth.errors";
+import { createMiddleware } from "hono/factory";
+import type { AuthEnv } from "@/modules/auth/middleware";
+import { tenantScope, type TenantScope } from "./tenant-scope";
 
-type TenantEnv = {
-  Variables: {
-    user: SessionUser,
-    session: Session,
-    tenant: string,
+export type TenantEnv = {
+  Variables: AuthEnv["Variables"] & {
+    scope: TenantScope;
   };
 };
 
+// Deve rodar depois de `requireAuth`. O tenant vem sempre da sessão, nunca do
+// request; `AuthService.getSession` já garante que ele está ativo e que
+// coincide com o tenant do usuário.
 export const requireTenant = createMiddleware<TenantEnv>(async (c, next) => {
-  const { user, session } = c.var;
-
-  if (user.tenantId !== session.tenantId) {
-    throw new UnauthenticatedError();
-  }
-
-  c.set("tenant", session.tenantId);
+  c.set("scope", tenantScope(c.var.session.tenantId));
   await next();
 });

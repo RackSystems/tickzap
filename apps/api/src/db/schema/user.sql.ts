@@ -1,4 +1,4 @@
-import { pgTable, text, boolean, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, boolean, index, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { timestamps } from "../columns.helpers";
 import { tenant } from "./tenant.sql";
 
@@ -22,5 +22,6 @@ export const user = pgTable(
       "btree",
       table.email.asc().nullsLast().op("text_ops"),
     ),
+    index("user_tenant_id_idx").on(table.tenantId),
   ],
 );

@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { timestamps } from "../columns.helpers";
 import { user } from "./user.sql";
 import {tenant} from "@/db/schema/tenant.sql";
@@ -24,5 +24,6 @@ export const session = pgTable(
       "btree",
       table.token.asc().nullsLast().op("text_ops"),
     ),
+    index("session_tenant_id_idx").on(table.tenantId),
   ],
 );

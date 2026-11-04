@@ -106,8 +106,13 @@ export async function signIn(
   meta: SignInMeta,
 ): Promise<{ token: string; session: Session; user: SessionUser }> {
   const [found] = await db
-    .select({ user: sessionUserColumns, password: user.password })
+    .select({
+      user: sessionUserColumns,
+      password: user.password,
+      tenantIsActive: tenant.isActive,
+    })
     .from(user)
+    .innerJoin(tenant, eq(user.tenantId, tenant.id))
     .where(eq(user.email, data.email))
     .limit(1);
 
@@ -120,12 +125,8 @@ export async function signIn(
     found.password,
   );
 
-  if (!isPasswordValid || !found.user.isActive) {
+  if (!isPasswordValid || !found.user.isActive || !found.tenantIsActive) {
     throw new InvalidCredentialsError();
-  }
-
-  if (!found.user.tenantId) {
-    throw new InvalidCredentialsError(); // TODO
   }
 
   const token = generateToken();
@@ -135,6 +136,7 @@ export async function signIn(
     .values({
       token: hashToken(token),
       userId: found.user.id,
+      tenantId: found.user.tenantId,
       expiresAt: new Date(Date.now() + SESSION_EXPIRES_IN),
       ipAddress: meta.ipAddress,
       userAgent: meta.userAgent,
@@ -153,11 +155,15 @@ export async function getSession(
     .select({ session: sessionColumns, user: sessionUserColumns })
     .from(session)
     .innerJoin(user, eq(session.userId, user.id))
+    .innerJoin(tenant, eq(session.tenantId, tenant.id))
     .where(
       and(
         eq(session.token, hashToken(token)),
         gt(session.expiresAt, now),
         eq(user.isActive, true),
+        eq(tenant.isActive, true),
+        // a sessão só vale para o tenant ao qual o usuário pertence
+        eq(session.tenantId, user.tenantId),
       ),
     )
     .limit(1);
@@ -181,4 +187,22 @@ export async function getSession(
 
 export async function signOut(token: string): Promise<void> {
   await db.delete(session).where(eq(session.token, hashToken(token)));
+}
+
+// Aceitam `executor` para participar da transação de quem chama
+// (ex.: desativar tenant/usuário e revogar sessões atomicamente).
+type Executor = Pick<typeof db, "delete">;
+
+export async function revokeUserSessions(
+  userId: string,
+  executor: Executor = db,
+): Promise<void> {
+  await executor.delete(session).where(eq(session.userId, userId));
+}
+
+export async function revokeTenantSessions(
+  tenantId: string,
+  executor: Executor = db,
+): Promise<void> {
+  await executor.delete(session).where(eq(session.tenantId, tenantId));
 }
