@@ -1,5 +1,7 @@
 .dockerignore
 .DS_Store
+.idea
+.vscode
 .editorconfig
 .env.example
 .gitattributes
@@ -10,3 +12,6 @@ README.md
 
 /node_modules
 /dist
+/dist-ssr
+/coverage
+*.log
