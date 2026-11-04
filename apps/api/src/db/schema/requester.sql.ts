@@ -13,7 +13,7 @@ export const requester = pgTable(
   identifierValue: text("identifier_value").notNull(),
   identifierType: text("identifier_type").notNull(),
   tenantId: uuid("tenant_id").notNull()
-    .references(() => tenant.id),
+    .references(() => tenant.id, { onDelete: "cascade" }),
   observations: jsonb(),
   ...timestamps,
   },

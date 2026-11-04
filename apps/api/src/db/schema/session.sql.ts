@@ -16,7 +16,7 @@ export const session = pgTable(
     userAgent: text("user_agent"),
     tenantId: uuid("tenant_id")
       .notNull()
-      .references(() => tenant.id),
+      .references(() => tenant.id, { onDelete: "cascade" }),
     ...timestamps,
   },
   (table) => [

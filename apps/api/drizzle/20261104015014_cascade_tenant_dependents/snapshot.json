@@ -1,0 +1,137 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "5bf516f3-2b35-43fe-9eed-2274ade9e3b4",
+  "prevIds": [
+    "7df260ae-82d4-4c5f-b4f0-42e38bf5bd80"
+  ],
+  "footprints": [
+    {
+      "statementType": "recreate_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "ticket"
+      ],
+      "writes": [
+        "s|fk|public.ticket.ticket_requester_id_requester_id_fkey",
+        "n|fk|public.ticket.ticket_requester_id_requester_id_fkey",
+        "e|fk|public.ticket.ticket_requester_id_requester_id_fkey",
+        "n|con|public.ticket.ticket_requester_id_requester_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.ticket",
+        "n|sch|public",
+        "n|tbl|public.requester",
+        "n|sch|public",
+        "n|col|public.ticket.requester_id",
+        "n|col|public.requester.id",
+        "e|uniqueness|public.requester.id"
+      ],
+      "sqlHash": "e221e7fcd73c473d"
+    },
+    {
+      "statementType": "recreate_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "requester"
+      ],
+      "writes": [
+        "s|fk|public.requester.requester_tenant_id_tenants_id_fkey",
+        "n|fk|public.requester.requester_tenant_id_tenants_id_fkey",
+        "e|fk|public.requester.requester_tenant_id_tenants_id_fkey",
+        "n|con|public.requester.requester_tenant_id_tenants_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.requester",
+        "n|sch|public",
+        "n|tbl|public.tenants",
+        "n|sch|public",
+        "n|col|public.requester.tenant_id",
+        "n|col|public.tenants.id",
+        "e|uniqueness|public.tenants.id"
+      ],
+      "sqlHash": "5dbaf3b555eaf911"
+    },
+    {
+      "statementType": "recreate_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "sessions"
+      ],
+      "writes": [
+        "s|fk|public.sessions.sessions_tenant_id_tenants_id_fkey",
+        "n|fk|public.sessions.sessions_tenant_id_tenants_id_fkey",
+        "e|fk|public.sessions.sessions_tenant_id_tenants_id_fkey",
+        "n|con|public.sessions.sessions_tenant_id_tenants_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.sessions",
+        "n|sch|public",
+        "n|tbl|public.tenants",
+        "n|sch|public",
+        "n|col|public.sessions.tenant_id",
+        "n|col|public.tenants.id",
+        "e|uniqueness|public.tenants.id"
+      ],
+      "sqlHash": "20e9ab947a4910be"
+    },
+    {
+      "statementType": "recreate_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "ticket"
+      ],
+      "writes": [
+        "s|fk|public.ticket.ticket_tenant_id_tenants_id_fkey",
+        "n|fk|public.ticket.ticket_tenant_id_tenants_id_fkey",
+        "e|fk|public.ticket.ticket_tenant_id_tenants_id_fkey",
+        "n|con|public.ticket.ticket_tenant_id_tenants_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.ticket",
+        "n|sch|public",
+        "n|tbl|public.tenants",
+        "n|sch|public",
+        "n|col|public.ticket.tenant_id",
+        "n|col|public.tenants.id",
+        "e|uniqueness|public.tenants.id"
+      ],
+      "sqlHash": "cb97f6820293a058"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "alter",
+      "key": "fks\u0000[\"public\",\"ticket\",\"ticket_requester_id_requester_id_fkey\"]",
+      "set": {
+        "onDelete": "CASCADE"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "fks\u0000[\"public\",\"requester\",\"requester_tenant_id_tenants_id_fkey\"]",
+      "set": {
+        "onDelete": "CASCADE"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "fks\u0000[\"public\",\"sessions\",\"sessions_tenant_id_tenants_id_fkey\"]",
+      "set": {
+        "onDelete": "CASCADE"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "fks\u0000[\"public\",\"ticket\",\"ticket_tenant_id_tenants_id_fkey\"]",
+      "set": {
+        "onDelete": "CASCADE"
+      }
+    }
+  ]
+}

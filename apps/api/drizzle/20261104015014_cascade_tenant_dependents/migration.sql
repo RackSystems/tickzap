@@ -1,0 +1,4 @@
+ALTER TABLE "ticket" DROP CONSTRAINT "ticket_requester_id_requester_id_fkey", ADD CONSTRAINT "ticket_requester_id_requester_id_fkey" FOREIGN KEY ("requester_id") REFERENCES "requester"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "requester" DROP CONSTRAINT "requester_tenant_id_tenants_id_fkey", ADD CONSTRAINT "requester_tenant_id_tenants_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "tenants"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "sessions" DROP CONSTRAINT "sessions_tenant_id_tenants_id_fkey", ADD CONSTRAINT "sessions_tenant_id_tenants_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "tenants"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "ticket" DROP CONSTRAINT "ticket_tenant_id_tenants_id_fkey", ADD CONSTRAINT "ticket_tenant_id_tenants_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "tenants"("id") ON DELETE CASCADE;

@@ -1,22 +1,18 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { z } from "zod";
-import {AuthEnv, requireAuth} from "@/modules/auth/middleware";
-import { tenantSchema, tenantIdParamSchema, tenantQuerySchema, updateTenantSchema } from "@/modules/tenant/tenant.schema";
+import { requireAuth } from "@/modules/auth/middleware";
+import { requireTenant, type TenantEnv } from "@/modules/tenant/middleware";
+import { tenantQuerySchema } from "@/modules/tenant/tenant.schema";
 import * as TenantService from "@/modules/tenant/tenant.service";
 
-const router = new Hono<AuthEnv>();
+const router = new Hono<TenantEnv>();
 
-router.use("*", requireAuth);
+router.use("*", requireAuth, requireTenant);
 
-router.get("/", zValidator("query", tenantQuerySchema), async ( c) => {
-  return c.json(await TenantService.list(c.req.valid("query")));
-});
-
-router.post("/", zValidator("json", tenantSchema), async (c) => {
-  const data = c.req.valid("json");
-  const created = await TenantService.create(data);
-  return c.json(created, 201);
+// Não há rota de criação: o provisionamento de tenants é manual até existir
+// um papel de admin da plataforma.
+router.get("/", zValidator("query", tenantQuerySchema), async (c) => {
+  return c.json(await TenantService.list(c.var.scope, c.req.valid("query")));
 });
 
 export default router;

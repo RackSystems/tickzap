@@ -1,14 +1,17 @@
 import {db} from '@/db/drizzle';
 import {tenant} from "@/db/schema";
-import type {CreateTenant, TenantQuery, UpdateTenant, TenantIdParam} from './tenant.schema'
+import type {CreateTenant, TenantQuery} from './tenant.schema'
+import type {TenantScope} from './tenant-scope'
 import {and, eq} from "drizzle-orm";
 import {revokeTenantSessions} from "@/modules/auth/auth.service";
 
-export async function getById(id: string) {
+// A tabela `tenants` não tem `tenant_id`: o próprio `id` é a chave do escopo.
+export async function getById(scope: TenantScope, id: string) {
   const [found] = await db
     .select()
     .from(tenant)
-    .where(eq(tenant.id, id));
+    .where(and(eq(tenant.id, scope.tenantId), eq(tenant.id, id)))
+    .limit(1);
   return found;
 }
 
@@ -42,15 +45,16 @@ export async function setActive(id: string, isActive: boolean) {
   });
 }
 
-export async function list(query: TenantQuery) {
+export async function list(scope: TenantScope, query: TenantQuery) {
   return db
     .select()
     .from(tenant)
     .where(
       and(
+        eq(tenant.id, scope.tenantId),
         query.name ? eq(tenant.name, query.name) : undefined,
         query.documentNumber ? eq(tenant.documentNumber, query.documentNumber) : undefined,
         query.documentType ? eq(tenant.documentType, query.documentType) : undefined,
       )
-    )
+    );
 }

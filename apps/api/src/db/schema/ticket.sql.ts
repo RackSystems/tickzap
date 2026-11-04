@@ -11,9 +11,9 @@ export const ticket = pgTable(
   description: text("description").notNull(),
   status: text("status").notNull(),
   tags: jsonb("tags"),
-  requesterId: uuid("requester_id").notNull().references(() => requester.id),
+  requesterId: uuid("requester_id").notNull().references(() => requester.id, { onDelete: "cascade" }),
   tenantId: uuid("tenant_id").notNull()
-    .references(() => tenant.id),
+    .references(() => tenant.id, { onDelete: "cascade" }),
   ...timestamps,
   },
   (table) => [index("ticket_tenant_id_idx").on(table.tenantId)],

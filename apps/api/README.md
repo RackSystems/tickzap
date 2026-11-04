@@ -39,3 +39,9 @@ docker compose exec api bun run src/db/seed.ts
 ```
 
 Consulte também [a documentação de infraestrutura](../../docs/INFRA.md).
+
+## Testes
+
+```
+bun run test
+```
