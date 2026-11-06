@@ -26,7 +26,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0
           persist-credentials: false
 
       - name: Build web image
@@ -40,22 +39,6 @@ jobs:
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: docker run --rm tickzap-web-ci bun run type-check
 
-      # The web app is being formatted gradually, so only files changed by this
-      # push/PR are checked instead of the whole project.
-      - name: List changed files to format
-        id: changed
-        if: ${{ !cancelled() }}
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
-        run: |
-          if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
-            BASE_SHA=$(git hash-object -t tree /dev/null)
-          fi
-          git -C apps/web diff --relative --name-only --diff-filter=ACMR -z \
-            "$BASE_SHA" "$GITHUB_SHA" -- \
-            '*.vue' '*.ts' '*.mts' '*.cts' '*.js' '*.mjs' '*.cjs' '*.json' '*.css' '*.html' \
-            > "$RUNNER_TEMP/changed-files"
-
-      - name: Check formatting (changed files)
-        if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.changed.outcome == 'success' }}
-        run: xargs -0 -r docker run --rm tickzap-web-ci bunx prettier --check --ignore-unknown -- < "$RUNNER_TEMP/changed-files"
+      - name: Check formatting
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: docker run --rm tickzap-web-ci bun run format:check
