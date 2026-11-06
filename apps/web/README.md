@@ -20,4 +20,3 @@ docker compose up -d --build
 ```
 
 O frontend fica disponível em [localhost:5173](http://localhost:5173).
-

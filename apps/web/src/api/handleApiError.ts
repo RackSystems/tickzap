@@ -1,5 +1,5 @@
-import type { AxiosError } from 'axios';
-import { useToast } from 'vue-toastification';
+import type { AxiosError } from "axios";
+import { useToast } from "vue-toastification";
 
 const toast = useToast();
 

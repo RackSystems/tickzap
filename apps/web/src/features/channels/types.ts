@@ -1,9 +1,9 @@
 export enum ChannelType {
-  WHATSAPP_BAILEYS = 'WHATSAPP-BAILEYS',
+  WHATSAPP_BAILEYS = "WHATSAPP-BAILEYS",
 }
 
 export const ChannelTypeLabels: Record<ChannelType, string> = {
-  [ChannelType.WHATSAPP_BAILEYS]: 'Baileys',
+  [ChannelType.WHATSAPP_BAILEYS]: "Baileys",
 };
 
 export interface Channel {

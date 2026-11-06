@@ -9,13 +9,13 @@ export interface Contact {
   email: string;
   phone: string;
   avatar: string | null;
-  "birthDate": string | null;
-  "document": string | null;
-  "status": boolean;
-  "remoteJid": string;
-  "channelId": string;
-  "createdAt": string;
-  "updatedAt": string;
+  birthDate: string | null;
+  document: string | null;
+  status: boolean;
+  remoteJid: string;
+  channelId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface LastMessage {
@@ -45,8 +45,8 @@ export interface Message {
   content: string;
   mediaUrl: string | null;
   mediaType: string | null;
-  type: 'CLIENT' | 'USER';
-  status: 'SENT' | 'RECEIVED' | 'READ';
+  type: "CLIENT" | "USER";
+  status: "SENT" | "RECEIVED" | "READ";
   sentAt: string;
   receivedAt: string | null;
   readAt: string | null;

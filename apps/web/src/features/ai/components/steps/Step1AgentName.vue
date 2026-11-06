@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { ErrorMessage, Field, Form } from 'vee-validate';
+import { ref } from "vue";
+import { ErrorMessage, Field, Form } from "vee-validate";
 
 const props = defineProps<{
   modelValue: string;
 }>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string];
-  'next': [];
+  "update:modelValue": [value: string];
+  next: [];
 }>();
 
 const formRef = ref<InstanceType<typeof Form> | null>(null);
 
 function handleSubmit(): void {
   if (props.modelValue.trim().length >= 3) {
-    emit('next');
+    emit("next");
   }
 }
 
@@ -32,11 +32,7 @@ defineExpose({ validateAndNext });
 </script>
 
 <template>
-  <Form 
-    ref="formRef"
-    @submit.prevent="handleSubmit" 
-    class="space-y-4"
-  >
+  <Form ref="formRef" @submit.prevent="handleSubmit" class="space-y-4">
     <div class="form-control">
       <Field
         name="name"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 
 const props = defineProps<{
   modelValue: string;
@@ -7,39 +7,39 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string];
+  "update:modelValue": [value: string];
 }>();
 
 const objectives = [
-  { 
-    value: 'customer-support', 
-    label: 'Atendimento ao Cliente',
-    description: 'Resolver d?vidas e problemas dos clientes de forma r?pida e eficiente',
-    icon: '??'
+  {
+    value: "customer-support",
+    label: "Atendimento ao Cliente",
+    description: "Resolver d?vidas e problemas dos clientes de forma r?pida e eficiente",
+    icon: "??",
   },
-  { 
-    value: 'sales', 
-    label: 'Vendas',
-    description: 'Ajudar na convers?o de leads e fechamento de vendas',
-    icon: '??'
+  {
+    value: "sales",
+    label: "Vendas",
+    description: "Ajudar na convers?o de leads e fechamento de vendas",
+    icon: "??",
   },
-  { 
-    value: 'technical-support', 
-    label: 'Suporte T?cnico',
-    description: 'Fornecer assist?ncia t?cnica especializada para problemas complexos',
-    icon: '??'
+  {
+    value: "technical-support",
+    label: "Suporte T?cnico",
+    description: "Fornecer assist?ncia t?cnica especializada para problemas complexos",
+    icon: "??",
   },
-  { 
-    value: 'information', 
-    label: 'Informa??es',
-    description: 'Fornecer informa??es sobre produtos, servi?os e processos',
-    icon: '??'
+  {
+    value: "information",
+    label: "Informa??es",
+    description: "Fornecer informa??es sobre produtos, servi?os e processos",
+    icon: "??",
   },
-  { 
-    value: 'scheduling', 
-    label: 'Agendamento',
-    description: 'Agendar e gerenciar compromissos e reuni?es',
-    icon: '??'
+  {
+    value: "scheduling",
+    label: "Agendamento",
+    description: "Agendar e gerenciar compromissos e reuni?es",
+    icon: "??",
   },
 ];
 </script>
@@ -73,12 +73,7 @@ const objectives = [
             v-if="modelValue === objective.value"
             class="w-5 h-5 rounded-full bg-primary flex items-center justify-center"
           >
-            <svg
-              class="w-3 h-3 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"

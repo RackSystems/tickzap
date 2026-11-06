@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
-import { type AIAgent } from './types';
-import CreateAgentModal from './components/CreateAgentModal.vue';
-import IconDelete from '@/components/Icons/IconDelete.vue';
-import IconLoading from '@/components/Icons/IconLoading.vue';
-import { formatDate } from '@/utils/date';
+import { onMounted, reactive, ref } from "vue";
+import { type AIAgent } from "./types";
+import CreateAgentModal from "./components/CreateAgentModal.vue";
+import IconDelete from "@/components/Icons/IconDelete.vue";
+import IconLoading from "@/components/Icons/IconLoading.vue";
+import { formatDate } from "@/utils/date";
 
 const state = reactive<{
   agents: AIAgent[];
@@ -48,9 +48,14 @@ onMounted(list);
       <IconLoading />
     </div>
 
-    <div v-else-if="!state.agents || state.agents.length === 0" class="bg-gray-50 rounded-lg shadow-lg p-8 text-center">
+    <div
+      v-else-if="!state.agents || state.agents.length === 0"
+      class="bg-gray-50 rounded-lg shadow-lg p-8 text-center"
+    >
       <p class="text-gray-900">Nenhum agente encontrado</p>
-      <p class="text-gray-500 text-sm mt-2">Clique em "Criar Agente" para adicionar um novo agente IA</p>
+      <p class="text-gray-500 text-sm mt-2">
+        Clique em "Criar Agente" para adicionar um novo agente IA
+      </p>
     </div>
 
     <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -67,7 +72,7 @@ onMounted(list);
               class="px-2 py-1 text-xs font-semibold rounded-full"
               :class="agent.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'"
             >
-              {{ agent.isActive ? 'Ativo' : 'Inativo' }}
+              {{ agent.isActive ? "Ativo" : "Inativo" }}
             </span>
           </div>
 

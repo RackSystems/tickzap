@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 interface Props {
   name: string;
@@ -10,10 +10,10 @@ interface Props {
 const props = defineProps<Props>();
 
 const initials = computed(() => {
-  const name = (props.name || '').trim();
+  const name = (props.name || "").trim();
 
   if (!name) {
-    return '??';
+    return "??";
   }
 
   const parts = name.split(/\s+/).filter(Boolean);
@@ -24,7 +24,7 @@ const initials = computed(() => {
 
   // fallback: first two letters of the first word
   const first = parts[0];
-  return (first.slice(0, 2)).toUpperCase();
+  return first.slice(0, 2).toUpperCase();
 });
 </script>
 

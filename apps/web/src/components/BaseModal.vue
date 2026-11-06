@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 
 const props = defineProps<{
   title: string;
@@ -21,8 +21,11 @@ defineExpose({ open, close });
 <template>
   <dialog ref="dialog" class="modal modal-bottom sm:modal-middle">
     <div class="modal-box">
-
-      <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="close">
+      <button
+        type="button"
+        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+        @click="close"
+      >
         ✕
       </button>
 

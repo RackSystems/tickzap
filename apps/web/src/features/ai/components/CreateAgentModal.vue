@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue';
-import IconLoading from '@/components/Icons/IconLoading.vue';
-import IconBack from '@/components/Icons/IconBack.vue';
-import BaseModal from '@/components/BaseModal.vue';
-import Step1AgentName from './steps/Step1AgentName.vue';
-import Step2AgentObjective from './steps/Step2AgentObjective.vue';
+import { reactive, ref, computed } from "vue";
+import IconLoading from "@/components/Icons/IconLoading.vue";
+import IconBack from "@/components/Icons/IconBack.vue";
+import BaseModal from "@/components/BaseModal.vue";
+import Step1AgentName from "./steps/Step1AgentName.vue";
+import Step2AgentObjective from "./steps/Step2AgentObjective.vue";
 
 const isLoading = ref<boolean>(false);
 const modalBase = ref<InstanceType<typeof BaseModal> | null>(null);
@@ -13,26 +13,26 @@ const totalSteps = 2;
 const step1Ref = ref<InstanceType<typeof Step1AgentName> | null>(null);
 
 const form = reactive({
-  name: '',
-  objective: '',
+  name: "",
+  objective: "",
 });
 
 const emit = defineEmits<{
-  (e: 'agentCreated'): void
+  (e: "agentCreated"): void;
 }>();
 
 const stepTitle = computed(() => {
   if (currentStep.value === 1) {
-    return 'Criar um novo agente';
+    return "Criar um novo agente";
   }
-  return `Qual objetivo de ${form.name || 'A'}?`;
+  return `Qual objetivo de ${form.name || "A"}?`;
 });
 
 const stepDescription = computed(() => {
   if (currentStep.value === 1) {
-    return 'Seja criativo, escolha o nome que seu agente vai usar para se apresentar.';
+    return "Seja criativo, escolha o nome que seu agente vai usar para se apresentar.";
   }
-  return 'Escolha o que melhor define o objetivo que seu agente vai ter.';
+  return "Escolha o que melhor define o objetivo que seu agente vai ter.";
 });
 
 const canGoNext = computed(() => {
@@ -54,7 +54,7 @@ function nextStep(): void {
     step1Ref.value?.validateAndNext();
     return;
   }
-  
+
   if (currentStep.value < totalSteps && canGoNext.value) {
     currentStep.value++;
   }
@@ -67,8 +67,8 @@ function previousStep(): void {
 }
 
 function resetForm(): void {
-  form.name = '';
-  form.objective = '';
+  form.name = "";
+  form.objective = "";
   currentStep.value = 1;
 }
 
@@ -77,11 +77,11 @@ async function submitHandler(): Promise<void> {
 
   try {
     // TODO: Implementar chamada ao serviço
-    console.log('Criar agente:', form);
+    console.log("Criar agente:", form);
 
     resetForm();
     modalBase.value?.close();
-    emit('agentCreated');
+    emit("agentCreated");
   } finally {
     isLoading.value = false;
   }
@@ -101,11 +101,7 @@ defineExpose({ open });
       <!-- Progress Indicator -->
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
-          <div
-            v-for="step in totalSteps"
-            :key="step"
-            class="flex items-center"
-          >
+          <div v-for="step in totalSteps" :key="step" class="flex items-center">
             <div
               class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all"
               :class="
@@ -148,12 +144,7 @@ defineExpose({ open });
 
       <!-- Navigation Buttons -->
       <div class="flex justify-between items-center pt-4 border-t">
-        <button
-          v-if="currentStep > 1"
-          @click="previousStep"
-          type="button"
-          class="btn btn-ghost"
-        >
+        <button v-if="currentStep > 1" @click="previousStep" type="button" class="btn btn-ghost">
           <IconBack class="mr-2" />
           Voltar
         </button>
@@ -168,12 +159,7 @@ defineExpose({ open });
             class="btn btn-primary"
           >
             Avançar
-            <svg
-              class="w-4 h-4 ml-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -194,13 +180,7 @@ defineExpose({ open });
             Criar Agente
           </button>
 
-          <button
-            type="button"
-            @click="modalBase?.close()"
-            class="btn btn-ghost"
-          >
-            Cancelar
-          </button>
+          <button type="button" @click="modalBase?.close()" class="btn btn-ghost">Cancelar</button>
         </div>
       </div>
     </div>

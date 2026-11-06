@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { useAuthStore } from '@/features/auth/useAuthStore';
-import { useRouter } from 'vue-router';
-import type { LoginRequest } from '@/features/auth/types';
-import { ErrorMessage, Field, Form } from 'vee-validate';
-import AuthLayout from '@/features/auth/components/AuthLayout.vue';
-import IconLoading from '@/components/Icons/IconLoading.vue';
+import { reactive, ref } from "vue";
+import { useAuthStore } from "@/features/auth/useAuthStore";
+import { useRouter } from "vue-router";
+import type { LoginRequest } from "@/features/auth/types";
+import { ErrorMessage, Field, Form } from "vee-validate";
+import AuthLayout from "@/features/auth/components/AuthLayout.vue";
+import IconLoading from "@/components/Icons/IconLoading.vue";
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -13,8 +13,8 @@ const auth = useAuthStore();
 const isLoading = ref<boolean>(false);
 
 const form = reactive<LoginRequest>({
-  email: '',
-  password: '',
+  email: "",
+  password: "",
 });
 
 async function loginHandler(): Promise<void> {
@@ -26,7 +26,7 @@ async function loginHandler(): Promise<void> {
   });
 
   if (response && auth.isLoggedIn) {
-    await router.push({ name: 'Home' });
+    await router.push({ name: "Home" });
   }
 
   isLoading.value = false;
@@ -41,17 +41,31 @@ async function loginHandler(): Promise<void> {
       <Field name="email" v-model="form.email" placeholder="E-mail" rules="email|required" />
       <ErrorMessage name="email" class="ml-2 mb-2 text-sm text-red-500" />
 
-      <Field name="password" v-model="form.password" type="password" placeholder="Senha" rules="required" />
+      <Field
+        name="password"
+        v-model="form.password"
+        type="password"
+        placeholder="Senha"
+        rules="required"
+      />
       <ErrorMessage name="password" class="ml-2 mb-2 text-sm text-red-500" />
 
-      <button id="submit-btn" type="submit" :disabled="isLoading" class="flex justify-center items-center">
+      <button
+        id="submit-btn"
+        type="submit"
+        :disabled="isLoading"
+        class="flex justify-center items-center"
+      >
         <IconLoading v-if="isLoading" class="mr-2" />
         Entrar
       </button>
     </Form>
 
-    <h2 class="text-xs text-center">Esqueceu sua senha?
-      <RouterLink to="/recuperar-senha" class="text-blue-600 hover:text-blue-900">Clique aqui</RouterLink>
+    <h2 class="text-xs text-center">
+      Esqueceu sua senha?
+      <RouterLink to="/recuperar-senha" class="text-blue-600 hover:text-blue-900"
+        >Clique aqui</RouterLink
+      >
     </h2>
   </AuthLayout>
 </template>

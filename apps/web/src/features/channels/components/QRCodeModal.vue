@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import IconLoading from '@/components/Icons/IconLoading.vue';
-import { reactive, ref } from 'vue';
-import { channelService } from '@/features/channels/service';
-import BaseModal from '@/components/BaseModal.vue';
+import IconLoading from "@/components/Icons/IconLoading.vue";
+import { reactive, ref } from "vue";
+import { channelService } from "@/features/channels/service";
+import BaseModal from "@/components/BaseModal.vue";
 
 const modalBase = ref<InstanceType<typeof BaseModal> | null>(null);
 
@@ -11,8 +11,8 @@ const state = reactive<{
   QRCode: string;
   isLoading: boolean;
 }>({
-  currentChannelId: '',
-  QRCode: '',
+  currentChannelId: "",
+  QRCode: "",
   isLoading: false,
 });
 

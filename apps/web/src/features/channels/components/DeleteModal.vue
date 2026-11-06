@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import IconLoading from '@/components/Icons/IconLoading.vue';
-import { reactive, ref } from 'vue';
-import BaseModal from '@/components/BaseModal.vue';
-import { channelService } from '@/features/channels/service';
+import IconLoading from "@/components/Icons/IconLoading.vue";
+import { reactive, ref } from "vue";
+import BaseModal from "@/components/BaseModal.vue";
+import { channelService } from "@/features/channels/service";
 
 const modalBase = ref<InstanceType<typeof BaseModal> | null>(null);
 
@@ -10,12 +10,12 @@ const state = reactive<{
   currentChannelId: string;
   isLoading: boolean;
 }>({
-  currentChannelId: '',
+  currentChannelId: "",
   isLoading: false,
 });
 
 const emit = defineEmits<{
-  (e: 'channelDeleted'): void
+  (e: "channelDeleted"): void;
 }>();
 
 async function destroy(): Promise<void> {
@@ -24,7 +24,7 @@ async function destroy(): Promise<void> {
   try {
     await channelService.delete(state.currentChannelId);
     modalBase.value?.close();
-    emit('channelDeleted');
+    emit("channelDeleted");
   } finally {
     state.isLoading = false;
   }

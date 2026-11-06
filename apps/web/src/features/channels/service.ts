@@ -1,14 +1,14 @@
-import apiClient from '@/api/apiClient';
-import type { Channel, CreateChannelPayload } from '@/features/channels/types';
+import apiClient from "@/api/apiClient";
+import type { Channel, CreateChannelPayload } from "@/features/channels/types";
 
 export const channelService = {
   async list(): Promise<Channel[]> {
-    const response = await apiClient.get('/channels');
+    const response = await apiClient.get("/channels");
     return response.data;
   },
 
   async create(payload: CreateChannelPayload): Promise<Channel> {
-    const response = await apiClient.post('/channels', payload);
+    const response = await apiClient.post("/channels", payload);
     return response.data;
   },
 
